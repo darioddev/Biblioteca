@@ -1,9 +1,11 @@
     <div class="login-container">
         <?php
+        //En caso de que el usuario intente acceder con los campos vacios
+        //Se lanzara un mensaje informativo que esta almacenado en el array asociativo.
             if(checkExistenciaVar($errors)) {
         ?>
-            <p style="color:red"><?php if(checkExistenciaVar($errors["user"])) echo $errors["user"]?></p>
-            <p style="color:red"><?php if(checkExistenciaVar($errors["password"])) echo $errors["password"]?></p>
+            <p style="color:red"><?php if(isset($errors["user"])) echo $errors["user"]?></p>
+            <p style="color:red"><?php if(isset($errors["password"])) echo $errors["password"]?></p>
         <?php    
         }
         ?>

@@ -3,6 +3,7 @@
     session_start();
     /* Llamadas a archivos que necesitaremos en el código*/
     require("./lib/index.php");
+    require("./config/db.config.php");
     /* Se crea un array vacio para el control de errores este array sera un array asociativo */
     $errors = [] ;
     //Se comprueba si el formulario ha sido enviado
@@ -18,7 +19,7 @@
         //Comprobamos si no ahi errores , si no ahi errores esque los parametros introducidos
         //Son validos.
         if(empty($errors)) {
-            
+            //Comprobaremos si el usuario existe y si la contraseña es correcta
         }
     }
 ?>
