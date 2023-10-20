@@ -1,76 +1,180 @@
-body {
-    font-family: 'Open Sans', sans-serif;
-    background-color: #333; /* Fondo oscuro */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+:root {
+    --primary-color: rgba(240, 240, 240, 0.8);
+    --text-color: #333;
+}
+
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Se agrega box-sizing para un mejor manejo del espacio en los elementos */
 }
 
-.header-container {
-    text-align: center;
-}
-.login-container {
-    margin-top: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    text-align: center;
-    width: 90%; /* Ancho del contenedor al 90% del ancho de la ventana */
-    max-width: 400px; /* Ancho máximo del contenedor */
-}
-
-.login-container h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #007BFF; /* Color de encabezado atractivo */
-}
-
-.login-container form {
+body {
+    background: url('../images/fondo.webp') no-repeat center center fixed;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Open Sans', sans-serif;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-.form-label {
-    text-align: left;
-    margin-bottom: 5px;
-    color: #555; /* Color de etiquetas más suave */
+.site-header {
+    text-align: center;
+    background-color: var(--primary-color);
+    padding: 20px;
+    position: relative;
 }
 
-.form-input {
-    width: 94%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    max-width: 100px;
+}
+
+.site-title {
+    font-size: 36px;
+    color: var(--text-color);
+    margin-top: 10px;
+}
+
+.line {
+    max-width: 50%; 
+    border-bottom: 2px solid var(--text-color);
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+.paragraph-header {
+    margin-top: 10px;
+}
+
+.form-header , .form-login{
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+}
+.form-login {
+    margin-top: 10%;
+}
+.form-header {
+    margin-top: 2%;
+}
+.form {
+    margin-bottom: 20px;
+    width: 100%; 
+    max-width: 500px; 
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Agregar estilos a los labels y al botón de envío */
+.form label {
+    display: block;
+    margin-top: 10px;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"] {
+    width: 100%; /* Aprovechar el ancho completo en todos los tamaños de pantalla */
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--text-color);
     border-radius: 5px;
-    color: #555; /* Color de texto más oscuro */
 }
 
-.login-button {
-    background-color: #007BFF;
-    color: #fff;
+.form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: var(--text-color);
+    color: var(--primary-color);
     border: none;
     border-radius: 5px;
-    padding: 12px;
+    font-weight: bold;
     cursor: pointer;
-    font-weight: 700; /* Texto en negrita */
 }
 
-.login-button:hover {
-    background-color: #0056b3;
-}
-
-.register-link {
+footer {
+    margin-top: auto; 
+    width: 100%;
+    background-color: var(--primary-color);
+    padding: 10px 0;
     text-align: center;
-    margin-top: 20px;
 }
 
-@media (max-width: 600px) {
-    .login-container {
-        width: 80%; /* Cambiar el ancho en pantallas más pequeñas */
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.github-icon {
+    margin: 0 10px; /* Espacio a ambos lados del ícono */
+}
+.error-message-login p {
+    padding-left: 3px;
+    color: red;
+}
+.error-message {
+    width: 100%;
+    max-width: 500px;
+    background-color: #ffdddd;
+    border: 1px solid #ff9999;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px auto;
+    color: red;
+    width: 1200px; /* Puede que quieras ajustar este ancho */
+}
+
+.warning-message {
+    background-color: #ffff99;
+    border: 1px solid #ffcc00;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px auto;
+    color: #333;
+    width: 1200px; /* Puede que quieras ajustar este ancho */
+}
+
+.error-message ul, .warning-message ul {
+    list-style-type: none;
+}
+
+.error-message li, .warning-message li {
+    padding-top: 10px;
+    margin-left: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.warning-message li {
+    color: #ff0000;
+}
+@media (max-width: 768px) {
+    .form {
+        margin-top: 30px;
     }
-    .header-container {
-        display: none;
+    .line {
+        max-width: 100%;
+    }
+    .site-title {
+        font-size: 24px;
+    }
+    footer{
+        margin-top: 30px;
+    }
+    .error-message , .warning-message{
+        width: 100%;
     }
 }
