@@ -4,18 +4,28 @@
 
       //Comprobamos si el boton ha sido enviado 
       if(isset($_POST['sendLogin'])) {
-        //Si el usuario no ha sido definidio o el usuario no existe en la base de datos , o el campo contraseña no ha sido definidio o no ha sido 
-        //definio , devolveremos un mensaje al usuario descriptivo diciendo :
-        // Usuario y/o contraseña no son correctos.
-        if(!validaExistenciaVaribale($_POST['userLogin']) || !validaExistenciaVaribale($_POST['passwordLogin']) 
-        || !sql_valida_login($_POST['userLogin'],$_POST['passwordLogin']))
+        //Primero compruebo si el campo de usuario y contraseña estan definidos y no son nulos
+        // Y tambien compruebo que cumplan las condiciones de seguridad como cuando se registran.
+        if(!validaExistenciaVaribale($_POST['userLogin']) || !validaUsuario($_POST['userLogin'])
+         ||!validaExistenciaVaribale($_POST['passwordLogin']) || !validaPassword($_POST['passwordLogin'])) 
+         $error_login = 'El usuario y/o contraseña introducida no son validos.';
+        
+         //En caso de que los parametros cumplen con las condiciones y no son vacios
+         //Pasamos a comprobar si existe en la base de datos y es correcta su contraseña introducida
+         
+         //Comprobamos el if con negacion , esto es por que si es falso no existe y poder lanzar un mensaje
+         //Descriptivo al usuario notificando que los datos no son correctos
+         //De lo contrario si devuelve verdadero la funcion nunca creara $error_login
+        if(!isset($error_login) && !sql_valida_login($_POST['userLogin'],$_POST['passwordLogin'])) 
+            $error_login = 'El usuario y/o contraseña no son correctos';
 
-        $error_login = 'Usuario y/o contraseña no son correctos.'; 
-
-        //Si los campos estan deinifidos y estan correctos y existen en la BBDD , redireccionamos a home.
-        else 
-        header('Location:'.$_SERVER['PHP_SELF'].'?ruta=home');
-      }
+        //En el caso de que la funcion sql_valida_login de verdadero llegaremos a este punto
+        //Que significara que no ahi errores y que existe el usuario y la contraseña introducida es correcta.
+        if(!isset($error_login)){
+            $_SESSION['user'] = $_POST['userLogin'];
+            header('Location:'.$_SERVER['PHP_SELF'].'?ruta=home');
+        }
+    }
 ?>
 
 

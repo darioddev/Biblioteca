@@ -1,3 +1,12 @@
+<?php
+    //Almaceno en una variable SOLAMENTE el nombre del fichero es decir localhost/Biblioteca/index.php?ruta=ejemplo
+    //Almacenara en la variable index.php?ruta=ejemplo.
+    $nomre_url = basename($_SERVER['REQUEST_URI']);
+    //Almaceno las rutas en un array las rutas que quiero que solo muestre el header , 
+    //En este caso son el principales.
+    $url_header_principal=['index.php','index.php?ruta=login','index.php?ruta=register'];
+    if(in_array($nomre_url,$url_header_principal)){
+?>
 <header class="site-header">
         <div class="header-content">
             <img src="./assets/images/logolibros.png" alt="Libros" class="logo">
@@ -30,3 +39,6 @@
         }
         ?>
 </header>
+<?php
+    }
+?>

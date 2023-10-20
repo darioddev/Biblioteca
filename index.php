@@ -1,3 +1,19 @@
+<?php
+    session_start();
+
+    //Almaceno mediante un array asociativo como clave las rutas y como valor la ruta que utilisamos como valor del GET
+    $url_todos = [
+        './includes/register.inc.php' => 'register',
+        './includes/login.inc.php'    => 'login',
+    ];
+
+    $url_usuarios = [
+        './includes/home.inc.php'     =>  'home',
+        './includes/logout.inc.php'   =>  'logout'
+    ]
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,19 +29,45 @@
     <?php
         include_once('./includes/header.inc.php');
     ?>
-
     <?php
+        //Verificamos si ahi un metodo GET con la palabra clave "ruta" y que no este vacia.
         if(isset($_GET['ruta']) && !empty($_GET['ruta'])){
-            if($_GET['ruta'] == 'register'){
-                include_once('./includes/register.inc.php');
-            } elseif($_GET['ruta'] == 'login') {
-                include_once('./includes/login.inc.php');
+            //
+            $url_get = array_search($_GET['ruta'],$url_todos);
+            if($url_get){
+                if(!isset($_SESSION['user'])) include_once($url_get);
+                else header('Location:'.$_SERVER['PHP_SELF'].'?ruta=home');
+            }else {
+               $url_get = array_search($_GET['ruta'],$url_usuarios);
+               if($url_get && isset($_SESSION['user'])) include_once($url_get);
+               else header('Location:'.$_SERVER['PHP_SELF'].'?ruta=login');
             }
         }
+    
     ?>
     
     <?php
         include_once('./includes/footer.inc.php');
     ?>
+
+
+<?php
+            /*
+            //Rutas que cualquier usuario puede visionar
+            if($_GET['ruta'] == 'register'){
+                if(!isset($_SESSION['user'])) include_once('./includes/register.inc.php');
+                else header('Location:'.$_SERVER['PHP_SELF'].'?ruta=home');
+
+            } elseif($_GET['ruta'] == 'login') {
+                if(!isset($_SESSION['user'])) include_once('./includes/login.inc.php');
+                else header('Location:'.$_SERVER['PHP_SELF'].'?ruta=home');
+            
+            }elseif($_GET['ruta'] == 'home') {
+                if(isset($_SESSION['user'])) include_once('./includes/home.inc.php');
+                else header('Location:'.$_SERVER['PHP_SELF'].'?ruta=login');
+
+            }elseif ($_GET['ruta'] == 'logout') {
+                include_once('./includes/logout.inc.php');*/
+?>
 </body>
 </html>
