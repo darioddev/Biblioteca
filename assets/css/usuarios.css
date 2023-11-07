@@ -1,0 +1,249 @@
+:root {
+  --body-color: #9B27B00D;
+  --sidebar-color: #FFFFFF;
+  --primary-color: blue;
+  --primary-color-light: #9B27B00D;
+  --toggle-color: #DDDDDD;
+  --text-color: #707070;
+
+  --trans-03: all 0.2s ease;
+  --trans-04: all 0.3s ease;
+  --trans-05: all 0.4s ease;
+}
+
+.table-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2f2ee9;
+  padding: 10px;
+  color: white;
+}
+
+.table-options-row {
+  display: flex;
+  align-items: center;
+}
+
+.table-options-row span {
+  margin-right: 10px;
+}
+
+.table-options-row input {
+  width: 50px;
+  height: 28px;
+  line-height: 28px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: var(--trans-03);
+}
+
+.table-options-row input::placeholder {
+  color: #9e9ea7;
+}
+
+.table-options-row input:focus,
+.table-options-row input:hover {
+  outline: none;
+  border-color: rgba(234, 76, 137, 0.4);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(234, 76, 137, 0.1);
+}
+
+.table-options-order {
+  display: flex;
+  align-items: center;
+  max-width: 190px;
+}
+
+.table-options-order select {
+  width: 100%;
+  height: 28px;
+  padding: 0 1rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: var(--trans-03);
+}
+
+.table-options-order select:focus,
+.table-options-order select:hover {
+  outline: none;
+  border-color: rgba(234, 76, 137, 0.4);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(234, 76, 137, 0.1);
+}
+
+.table-options-search {
+  display: flex;
+  align-items: center;
+}
+
+.form button {
+  border: none;
+  background: none;
+  color: #8b8ba7;
+}
+
+.form {
+  --timing: 0.3s;
+  --width-of-input: 200px;
+  --height-of-input: 40px;
+  --border-height: 2px;
+  --input-bg: #fff;
+  --border-color: #2f2ee9;
+  --border-radius: 30px;
+  --after-border-radius: 1px;
+  position: relative;
+  width: var(--width-of-input);
+  height: var(--height-of-input);
+  display: flex;
+  align-items: center;
+  padding-inline: 0.8em;
+  border-radius: var(--border-radius);
+  transition: border-radius 0.5s ease;
+  background-color: #f3f3f4;
+}
+
+.input {
+  font-size: 0.9rem;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+}
+
+.form:before {
+  content: "";
+  position: absolute;
+  background: var(--border-color);
+  transform: scaleX(0);
+  transform-origin: center;
+  width: 100%;
+  height: var(--border-height);
+  left: 0;
+  bottom: 0;
+  border-radius: 1px;
+  transition: transform var(--timing) ease;
+}
+
+.form:focus-within {
+  border-radius: var(--after-border-radius);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.form:focus-within:before {
+  transform: scale(1);
+}
+
+.reset {
+  border: none;
+  background: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.input:not(:placeholder-shown) ~ .reset {
+  opacity: 1;
+  visibility: visible;
+}
+
+.form svg {
+  width: 17px;
+  margin-top: 3px;
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 20px;
+  place-items: center;
+}
+
+.add-link {
+  background-color: var(--primary-color);
+  width: 30px;
+  border-radius: 2px;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.add-link a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.add-link i {
+  font-size: 30px;
+}
+
+.table-options-search {
+  margin-right: 20px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table th, .table td {
+  border: 1px solid firebrick;
+  padding: 8px;
+  text-align: center;
+}
+
+.table th {
+  background-color: #f2f2f2;
+}
+
+.table-state span{
+  background-color: #57C975;
+  height: 40px;
+  color: white;
+}
+
+.option-table {
+  display: flex;
+  justify-content: center;
+}
+
+.option-table ul {
+  display: flex;
+}
+
+.option-table ul li a i {
+  font-size: 20px;
+  color: var(--text-color);
+}
+
+.option-table ul li {
+  margin-right: 20px;
+  display: grid;
+  width: 50px;
+  border-radius: 10px;
+  height: 30px;
+  list-style: none;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.option-table ul li.alt {
+  background-color: red;
+}
+
+.option-table ul li.cog {
+  background-color: var(--primary-color);
+}

@@ -1,5 +1,5 @@
 :root {
-    --primary-color: rgba(240, 240, 240, 0.8);
+    --primary-color: #CACCCE;
     --text-color: #333;
 }
 
@@ -10,20 +10,39 @@
 }
 
 body {
-    background: url('../images/fondo.webp') no-repeat center center fixed;
+    /*background: url('../images/fondo.webp') no-repeat center center fixed;*/
     background-size: cover;
     background-attachment: fixed;
     font-family: 'Open Sans', sans-serif;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+}
+body::before {
+    content: '';
+    /*background: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad según lo desees */
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1; /* Detrás del contenido */
 }
 
 .site-header {
-    text-align: center;
+    text-align: center; 
     background-color: var(--primary-color);
     padding: 20px;
     position: relative;
+}
+  
+.content-name-user {
+    display: flex;
+    align-items: center;
+}
+  
+.name-user {
+    margin-right: 20px;
 }
 
 .header-content {
@@ -33,13 +52,13 @@ body {
 }
 
 .logo {
-    max-width: 100px;
+    max-width: 100px; 
 }
 
 .site-title {
-    font-size: 36px;
+    font-size: 36px; 
     color: var(--text-color);
-    margin-top: 10px;
+    margin-top: 10px; 
 }
 
 .line {
@@ -52,6 +71,7 @@ body {
 .paragraph-header {
     margin-top: 10px;
 }
+
 
 .form-header , .form-login{
     display: flex; 
@@ -121,22 +141,10 @@ footer {
 .github-icon {
     margin: 0 10px; /* Espacio a ambos lados del ícono */
 }
-.error-message-login p {
+.message-error{
     padding-left: 3px;
     color: red;
 }
-.error-message {
-    width: 100%;
-    max-width: 500px;
-    background-color: #ffdddd;
-    border: 1px solid #ff9999;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 20px auto;
-    color: red;
-    width: 1200px; /* Puede que quieras ajustar este ancho */
-}
-
 .warning-message {
     background-color: #ffff99;
     border: 1px solid #ffcc00;
@@ -144,23 +152,25 @@ footer {
     padding: 10px;
     margin: 20px auto;
     color: #333;
-    width: 1200px; /* Puede que quieras ajustar este ancho */
+    width: 95%;
 }
 
-.error-message ul, .warning-message ul {
-    list-style-type: none;
-}
-
-.error-message li, .warning-message li {
-    padding-top: 10px;
-    margin-left: 20px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.warning-message li {
+.warning-message p {
     color: #ff0000;
 }
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-link a {
+    text-decoration: none;
+    color: #0073e6;
+    font-weight: bold;
+}
+/* Estilos del fichero home.inc.php*/
+
 @media (max-width: 768px) {
     .form {
         margin-top: 30px;
@@ -170,9 +180,6 @@ footer {
     }
     .site-title {
         font-size: 24px;
-    }
-    footer{
-        margin-top: 30px;
     }
     .error-message , .warning-message{
         width: 100%;
