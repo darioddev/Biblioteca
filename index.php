@@ -8,6 +8,8 @@ session_start();
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -33,9 +35,9 @@ session_start();
             else
                 header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=login');
         } else {
-            if (isset($URL_USUARIOS[$_GET['ruta']]))
+            if (isset($URL_USUARIOS[$_GET['ruta']])) {
                 include_once($URL_USUARIOS[$_GET['ruta']]);
-            else
+            } else
                 header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=home');
         }
     } else {

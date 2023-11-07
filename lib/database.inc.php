@@ -38,11 +38,11 @@ function sql_obtener_usuario(string $usuario)
         $mysqli = sql_conect();
         // Escapamos el valor de $usuario utilizando mysqli_real_escape_string.
         $usuario = mysqli_real_escape_string($mysqli, $usuario);
-        
+
         // Inicializamos una sentencia preparada.
         $consulta = $mysqli->stmt_init();
 
-        $consulta->prepare("SELECT NOMBRE,APELLIDO,APELLIDO2,NOMBRE_USUARIO,CONTRASEÑA,CORREO_ELECTRONICO,ROL,FECHA_REGISTRO FROM Usuarios WHERE Nombre_Usuario = ? OR Correo_Electronico = ?");
+        $consulta->prepare("SELECT ID,NOMBRE,APELLIDO,APELLIDO2,NOMBRE_USUARIO,CONTRASEÑA,CORREO_ELECTRONICO,ROL,FECHA_REGISTRO,ESTADO FROM Usuarios WHERE Nombre_Usuario = ? OR Correo_Electronico = ?");
 
         //Se debe pasar dos veces el parametro debido a que en la consulta espera 2 parametros.
         $consulta->bind_param('ss', $usuario, $usuario);
@@ -223,4 +223,38 @@ function sql_get_all_usuarios(int $ini, int $limit)
  * Update
  */
 
+function sql_update_row(string $correo)
+{
+    try {
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        $bloque = "ESTADO";
+
+        $state = sql_get_rol($correo)[$bloque] ? 0 : 1;
+
+        echo $state."";
+
+        $consulta->prepare('UPDATE Usuarios SET ' . $bloque . ' = ? WHERE CORREO_ELECTRONICO = ?');
+
+        $consulta->bind_param('is', $state, $correo);
+
+        $consulta->execute();
+
+        return  $consulta->get_result();
+
+    } catch (Exception $e) {
+        echo $e->getMessage();
+
+    } finally {
+        if ($consulta)
+            $consulta->close();
+        // Close the database connection after using it.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+
+    }
+}
 
