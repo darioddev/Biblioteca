@@ -22,49 +22,107 @@ function sql_conect()
 
         // Capturamos cualquier excepción que se haya lanzado al intentar conectarse a la base de datos.
     } catch (Exception $e) {
-
-        // Imprimimos un mensaje informativo del error.
-        echo 'Error: ' . $e->getMessage();
-
         // Retornamos un boolean con valor false para indicar que la conexión ha fallado.
         return false;
     }
 }
-
+/**
+ * Obtiene los datos de un usuario a partir de su nombre de usuario o correo electrónico.
+ *
+ * @param string $usuario Nombre de usuario o correo electrónico del usuario.
+ *
+ * @return array Datos del usuario o un array vacío si no se encuentra.
+ */
 function sql_obtener_usuario(string $usuario)
 {
     try {
         // Llamamos a la función sql_conect y almacenamos la conexión en una variable llamada $mysqli.
         $mysqli = sql_conect();
+
         // Escapamos el valor de $usuario utilizando mysqli_real_escape_string.
         $usuario = mysqli_real_escape_string($mysqli, $usuario);
 
         // Inicializamos una sentencia preparada.
         $consulta = $mysqli->stmt_init();
 
-        $consulta->prepare("SELECT ID,NOMBRE,APELLIDO,APELLIDO2,NOMBRE_USUARIO,CONTRASEÑA,CORREO_ELECTRONICO,ROL,FECHA_REGISTRO,ESTADO FROM Usuarios WHERE Nombre_Usuario = ? OR Correo_Electronico = ?");
+        // Preparamos la consulta SQL para obtener los datos del usuario.
+        $consulta->prepare("SELECT ID, NOMBRE, APELLIDO, APELLIDO2, NOMBRE_USUARIO, CONTRASEÑA, CORREO_ELECTRONICO, ROL, FECHA_REGISTRO, FECHA_MODIFICACION,ESTADO FROM Usuarios WHERE Nombre_Usuario = ? OR Correo_Electronico = ?");
 
-        //Se debe pasar dos veces el parametro debido a que en la consulta espera 2 parametros.
+        // Vinculamos el parámetro a la consulta (se repite dos veces debido a que la consulta espera dos parámetros).
         $consulta->bind_param('ss', $usuario, $usuario);
 
+        // Ejecutamos la consulta.
         $consulta->execute();
 
+        // Obtenemos el resultado de la consulta.
         $resultado = $consulta->get_result();
 
+        // Devolvemos los datos del usuario en forma de array asociativo.
         return $resultado->fetch_assoc();
 
     } catch (Exception $e) {
-        echo 'Exception ' . $e;
+        // En caso de error, devolvemos un array vacío.
         return [];
     } finally {
         // Cerramos la consulta después de su uso.
-        if ($consulta)
+        if ($consulta) {
             $consulta->close();
+        }
+
         // Cerramos la conexión después de utilizarla.
-        if ($mysqli)
+        if ($mysqli) {
             $mysqli->close();
+        }
     }
 }
+
+/**
+ * Obtiene los datos de un usuario a partir de su ID.
+ *
+ * @param mixed $id ID del usuario.
+ *
+ * @return array|false Datos del usuario o false si no se encuentra.
+ */
+function sql_usuario_id($id)
+{
+    try {
+        // Llamamos a la función sql_conect y almacenamos la conexión en una variable llamada $mysqli.
+        $mysqli = sql_conect();
+
+        // Inicializamos una sentencia preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Preparamos la consulta SQL para obtener los datos del usuario por su ID.
+        $consulta->prepare("SELECT ID, NOMBRE, APELLIDO, APELLIDO2, NOMBRE_USUARIO, CONTRASEÑA, CORREO_ELECTRONICO, ROL, FECHA_REGISTRO, FECHA_MODIFICACION,ESTADO FROM Usuarios WHERE ID = ? ");
+
+        // Vinculamos el parámetro a la consulta.
+        $consulta->bind_param('s', $id);
+
+        // Ejecutamos la consulta.
+        $consulta->execute();
+
+        // Obtenemos el resultado de la consulta.
+        $resultado = $consulta->get_result();
+
+        // Devolvemos los datos del usuario en forma de array asociativo.
+        return $resultado->fetch_assoc();
+
+    } catch (Exception $e) {
+        // En caso de error, devolvemos false.
+        return false;
+    } finally {
+        // Cerramos la consulta después de su uso.
+        if ($consulta) {
+            $consulta->close();
+        }
+
+        // Cerramos la conexión después de utilizarla.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+
 
 /**
  * Función que permite insertar un nuevo usuario en la base de datos.
@@ -105,9 +163,6 @@ function insertar_usuario(string $nombre, string $apellido, string $apellido2, s
         return true;
 
     } catch (Exception $e) {
-        // Mostramos un mensaje de error con echo.
-        echo 'Se produjo un error ' . $e->getMessage();
-
         // Retornamos false en caso de error.
         return false;
     } finally {
@@ -164,17 +219,30 @@ function sql_valida_login(string $usuario, $contrasena): bool
 {
     return sql_valida_contrasena($usuario, $contrasena);
 }
+
 /**
  * 
+ *//**
+ * Obtiene el estado de un usuario a partir de su nombre de usuario.
+ *
+ * @param string $usuario Nombre de usuario.
+ *
+ * @return mixed Estado del usuario o null si no se encuentra.
  */
-function sql_get_rol(string $usuario)
+function sql_get_estado(string $usuario)
 {
-    $data = sql_obtener_usuario($usuario);
-    return $data;
+    // Obtener datos del usuario a través de su nombre de usuario
+    $data = sql_usuario_id($usuario);
+
+    // Devolver el estado del usuario si se encuentra
+    return isset($data['ESTADO']) ? $data['ESTADO'] : null;
 }
 
-function sql_get_all_usuarios(int $ini, int $limit)
+function sql_get_all_usuarios($offset = 0, $count = null, $columna = null, $ordenTipo = 'ASC')
 {
+    // Initialize $resultado outside the try block.
+    $resultado = null;
+
     try {
         // Call the sql_connect function and store the connection in a variable called $mysqli.
         $mysqli = sql_conect();
@@ -182,37 +250,215 @@ function sql_get_all_usuarios(int $ini, int $limit)
         // Initialize a prepared statement.
         $consulta = $mysqli->stmt_init();
 
-        if ($consulta->prepare("SELECT ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO FROM Usuarios LIMIT ?,? ")) {
-            // Bind the parameter as an integer.
-            $consulta->bind_param("ii", $ini, $limit);
+        $query = "SELECT ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO FROM Usuarios";
 
-            // Execute the prepared statement.
-            $consulta->execute();
 
-            // Get the result set.
-            $resultado = $consulta->get_result();
 
-            // Check if the query was successful and return the result.
-            if ($resultado) {
-                return $resultado->fetch_all(MYSQLI_ASSOC);
-            } else {
-                echo "Query execution failed.";
-                return [];
-            }
+        // Agregar la cláusula ORDER BY si se proporciona $ordenarPor
+        if ($columna !== null) {
+            $query .= " ORDER BY " . $columna . " " . strtoupper($ordenTipo);
+        }
+
+        // Agregar la cláusula LIMIT si se proporciona $count
+        if ($count !== null) {
+            $query .= " LIMIT ?, ?";
+        }
+
+        $consulta = $mysqli->prepare($query);
+
+        // Bind parameters if $count is provided
+        if ($count !== null) {
+            $consulta->bind_param('ii', $offset, $count);
+        }
+
+        // Execute the prepared statement.
+        $consulta->execute();
+
+        // Get the result set.
+        $resultado = $consulta->get_result();
+
+        // Check if the query was successful and return the result.
+        if ($resultado) {
+            return $resultado->fetch_all(MYSQLI_ASSOC);
         } else {
-            echo "Prepared statement initialization failed.";
+            echo "Query execution failed.";
             return [];
         }
+
     } catch (Exception $e) {
-        echo '' . $e->getMessage();
         return [];
     } finally {
-        // Close the prepared statement after use.
-        if ($consulta) {
-            $consulta->close();
+        // Free the result set if it's not null.
+        if ($resultado) {
+            mysqli_free_result($resultado);
         }
 
         // Close the database connection after using it.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+function sql_search($valores, $tabla, $clave, $valor, $offset = null, $count = null)
+{
+    $resultado = false; // Initialize $resultado
+    $query = "SELECT " . $valores . " FROM " . $tabla . " WHERE " . $clave . " LIKE  ?  ";
+
+    try {
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        if ($count !== null && $offset !== null) {
+            $query .= " LIMIT ?,?";
+        }
+
+
+        if ($consulta->prepare($query)) {
+            if ($count !== null && $offset !== null) {
+                $consulta->bind_param("sii", $valor, $offset, $count);
+            } else {
+                $consulta->bind_param("s", $valor);
+
+            }
+
+            $consulta->execute();
+            $resultado = $consulta->get_result();
+
+            if (!$resultado) {
+                throw new Exception("Error");
+            }
+
+            return $resultado->fetch_all(MYSQLI_ASSOC);
+        } else {
+            throw new Exception("Error in prepare statement");
+        }
+    } catch (Exception $e) {
+        return [];
+    } finally {
+        if ($resultado) {
+            mysqli_free_result($resultado);
+        }
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+
+function sql_query_update($tabla, $column, $valor, $id)
+{
+    try {
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        // Validar y actualizar según la columna especificada
+        switch ($column) {
+            case "nombre":
+                if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor)) {
+                    throw new Exception("El nombre no puede estar vacío y/o no puede contener caracteres especiales.");
+                }
+                break;
+
+            case "apellido":
+                if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor)) {
+                    throw new Exception("El apellido no puede estar vacío y/o no puede contener caracteres especiales.");
+                }
+                break;
+
+            case "apellido2":
+                if (validaExistenciaVaribale($valor) && !validaNombreApellidos($valor)) {
+                    throw new Exception("El apellido 2 no puede contener caracteres especiales.");
+                }
+                break;
+
+            case "nombre_usuario":
+                if (!validaExistenciaVaribale($valor) || !validaUsuario($valor)) {
+                    throw new Exception("El usuario no puede estar vacío y/o no es válido.");
+                }
+                if (validaExistenciaVaribale($valor) && sql_valida_usuario_correo($valor)) {
+                    throw new Exception("El usuario introducido ya existe.");
+                }
+                break;
+
+            case "correo_electronico":
+                if (!validaExistenciaVaribale($valor) || !validaEmail($valor)) {
+                    throw new Exception("El correo no puede estar vacío y/o debe contener una dirección de correo electrónico válida.");
+                }
+                if (validaExistenciaVaribale($valor) && sql_valida_usuario_correo($valor)) {
+                    throw new Exception("El correo electronico introducido ya existe.");
+                }
+                break;
+            case "fecha_registro": {
+                    break;
+                }
+            case "rol": {
+                    break;
+                }
+
+            default:
+                throw new Exception("Columna no válida.");
+        }
+
+        $consulta->prepare('UPDATE ' . $tabla . ' SET ' . $column . ' = ? WHERE ID = ?');
+
+        $consulta->bind_param('ss', $valor, $id);
+
+        $success = $consulta->execute();
+
+        if (!$success)
+            return $consulta->error;
+
+        return true;
+
+    } catch (Exception $e) {
+        return $e->getMessage();
+    } finally {
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+/**
+ * Actualiza el estado de un usuario en la base de datos.
+ *
+ * @param int $id Identificador del usuario.
+ *
+ * @return array|mysqli|bool Resultado de la consulta.
+ */
+function sql_update_rol(int $id): array|mysqli|bool
+{
+    try {
+        // Conectar a la base de datos
+        $mysqli = sql_conect();
+
+        // Inicializar la consulta preparada
+        $consulta = $mysqli->stmt_init();
+
+        // Obtener el estado actual y determinar el nuevo estado (activo o inactivo)
+        $state = sql_get_estado($id) ? 0 : 1;
+
+        // Preparar la consulta SQL para actualizar el estado del usuario
+        $consulta->prepare('UPDATE Usuarios SET ESTADO = ? WHERE ID = ?');
+
+        // Vincular los parámetros a la consulta
+        $consulta->bind_param('ii', $state, $id);
+
+        // Ejecutar la consulta
+        $consulta->execute();
+
+        // Devolver el resultado de la consulta
+        return $consulta->get_result();
+
+    } catch (Exception $e) {
+        // En caso de error, devolver un array vacío
+        return [];
+    } finally {
+        // Cerrar la consulta después de usarla
+        if ($consulta)
+            $consulta->close();
+
+        // Cerrar la conexión a la base de datos después de usarla
         if ($mysqli) {
             $mysqli->close();
         }
@@ -220,41 +466,38 @@ function sql_get_all_usuarios(int $ini, int $limit)
 }
 
 /**
- * Update
+ * Función que cuenta el número total de registros en una tabla.
+ * 
+ * @param string $tabla El nombre de la tabla.
+ * 
+ * @return int Retorna el número total de registros en la tabla.
  */
-
-function sql_update_row(string $correo)
+function sql_count_tabla($tabla)
 {
     try {
         $mysqli = sql_conect();
 
         $consulta = $mysqli->stmt_init();
 
-        $bloque = "ESTADO";
-
-        $state = sql_get_rol($correo)[$bloque] ? 0 : 1;
-
-        echo $state."";
-
-        $consulta->prepare('UPDATE Usuarios SET ' . $bloque . ' = ? WHERE CORREO_ELECTRONICO = ?');
-
-        $consulta->bind_param('is', $state, $correo);
+        $consulta->prepare('SELECT COUNT(*) as total FROM ' . $tabla);
 
         $consulta->execute();
 
-        return  $consulta->get_result();
+        $resultado = $consulta->get_result();
+
+        $fila = $resultado->fetch_assoc();
+
+        return $fila['total'];
 
     } catch (Exception $e) {
-        echo $e->getMessage();
-
+        return 0;
     } finally {
         if ($consulta)
             $consulta->close();
-        // Close the database connection after using it.
-        if ($mysqli) {
-            $mysqli->close();
-        }
 
+        if ($mysqli)
+            $mysqli->close();
     }
 }
+
 

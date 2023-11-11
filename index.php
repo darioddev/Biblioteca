@@ -1,6 +1,11 @@
 <?php
 require_once('./config/rutas.config.inc.php');
 require_once('./lib/verificacion_datos.inc.php');
+require_once('./includes/pagination.inc.php');
+require_once('./includes/optionSearch.inc.php');
+require_once('./lib/sessions.inc.php');
+require_once('./includes/icons.inc.php');
+require_once('./includes/tablas.inc.php');
 require_once('./lib/database.inc.php');
 session_start();
 ?>

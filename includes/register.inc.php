@@ -5,18 +5,10 @@ $errores_campos = [];
 if (isset($_POST['send'])) {
     //Si el usuario ha enviado el formulario , validaremos que los campos que estan declarados y no estan vacios mediante la variable "validaExistenciaVariable"
     //Y mediante funciones comprobaremos que dichos datos son validos por ejemplo nombre y apellidos sin caracteres especiales , email necesita '@' y al menos un '.'
-    if (!validaExistenciaVaribale($_POST['name']) || !validaNombreApellidos($_POST['name']))
-        $errores_campos['name'] = 'No puede estar vacio y/o no puede contener caracteres especiales.';
-    if (!validaExistenciaVaribale($_POST['last_name1']) || !validaNombreApellidos($_POST['last_name1']))
-        $errores_campos['last_name1'] = 'No puede estar vacio y/o no puede contener caracteres especiales.';
-    if (!validaExistenciaVaribale($_POST['last_name2']) || !validaNombreApellidos($_POST['last_name2']))
-        $errores_campos['last_name2'] = 'No puede estar vacio y/o no puede contener caracteres especiales.';
-    if (!validaExistenciaVaribale($_POST['user']) || !validaUsuario($_POST['user']))
-        $errores_campos['user'] = 'No puede estar vacio y/o no es válido.';
-    if (!validaExistenciaVaribale($_POST['email']) || !validaEmail($_POST['email']))
-        $errores_campos['email'] = ' No puede estar vacío y/o debe contener una dirección de correo electrónico válida, por ejemplo, "nombre@ejemplo.com".';
+    $errores_campos = formularioDatosUsuario($_POST);
+
     if (!validaExistenciaVaribale($_POST['password']) || !validaPassword($_POST['password']))
-        $errores_campos['password'] = ' No puede estar vacío y/o como mínimo debe tener 8 caracteres , maximo 15 , minimo una mayuscula , minuscula y un número.';
+        $errores_campos['password'] = 'No puede estar vacío y/o como mínimo debe tener 8 caracteres, máximo 15, al menos una mayúscula, una minúscula y un número.';
 
     //Comprobamos si ahi errores en el array $errores_campos
     if (empty($errores_campos)) {

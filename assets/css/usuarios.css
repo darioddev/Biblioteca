@@ -1,21 +1,8 @@
-:root {
-  --body-color: #9B27B00D;
-  --sidebar-color: #FFFFFF;
-  --primary-color: blue;
-  --primary-color-light: #9B27B00D;
-  --toggle-color: #DDDDDD;
-  --text-color: #707070;
-
-  --trans-03: all 0.2s ease;
-  --trans-04: all 0.3s ease;
-  --trans-05: all 0.4s ease;
-}
-
 .table-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2f2ee9;
+  background-color: var(--primary-color);
   padding: 10px;
   color: white;
 }
@@ -53,32 +40,6 @@
   box-shadow: 0 0 0 4px rgba(234, 76, 137, 0.1);
 }
 
-.table-options-order {
-  display: flex;
-  align-items: center;
-  max-width: 190px;
-}
-
-.table-options-order select {
-  width: 100%;
-  height: 28px;
-  padding: 0 1rem;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  outline: none;
-  background-color: #f3f3f4;
-  color: #0d0c22;
-  transition: var(--trans-03);
-}
-
-.table-options-order select:focus,
-.table-options-order select:hover {
-  outline: none;
-  border-color: rgba(234, 76, 137, 0.4);
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(234, 76, 137, 0.1);
-}
-
 .table-options-search {
   display: flex;
   align-items: center;
@@ -90,7 +51,7 @@
   color: #8b8ba7;
 }
 
-.form {
+.form , .table-options-order{
   --timing: 0.3s;
   --width-of-input: 200px;
   --height-of-input: 40px;
@@ -108,17 +69,27 @@
   border-radius: var(--border-radius);
   transition: border-radius 0.5s ease;
   background-color: #f3f3f4;
+  margin-bottom: 0 !important;
 }
 
-.input {
+.table-options-order {
+  margin-right: 20px;
+}
+.inputSearch , .table-options-order select{
   font-size: 0.9rem;
   background-color: transparent;
   width: 100%;
   height: 100%;
   padding-inline: 0.5em;
-  padding-block: 0.7em;
-  border: none;
+  padding-block: 0.2em;
+  border: none !important;
 }
+
+.table-options-order select {
+  height: 90%;
+  padding-top: -20px;
+}
+
 
 .form:before {
   content: "";
@@ -138,7 +109,7 @@
   border-radius: var(--after-border-radius);
 }
 
-.input:focus {
+.inputSearch:focus {
   outline: none;
 }
 
@@ -153,7 +124,7 @@
   visibility: hidden;
 }
 
-.input:not(:placeholder-shown) ~ .reset {
+.inputSearch:not(:placeholder-shown) ~ .reset {
   opacity: 1;
   visibility: visible;
 }
@@ -165,18 +136,15 @@
 
 .add {
   display: flex;
-  align-items: center;
-  padding: 10px;
+  align-items: right;
   border-radius: 8px;
-  margin-top: 20px;
   place-items: center;
+  margin-right: 20px;
 }
 
 .add-link {
-  background-color: var(--primary-color);
-  width: 30px;
-  border-radius: 2px;
-  margin-right: 10px;
+  background-color: var(--primary-color-light);
+  border-radius: 4px;
   text-align: center;
 }
 
@@ -184,10 +152,19 @@
   text-decoration: none;
   color: white;
   font-weight: bold;
+  border-radius: 4px;
 }
 
+
 .add-link i {
-  font-size: 30px;
+  min-width: 60px;
+  border-radius: 6px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;  color: var(--text-color);
+  transition: var(--trans-05);
 }
 
 .table-options-search {
@@ -199,7 +176,8 @@
   width: 100%;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   border: 1px solid firebrick;
   padding: 8px;
   text-align: center;
@@ -209,8 +187,8 @@
   background-color: #f2f2f2;
 }
 
-.table-state span{
-  background-color: #57C975;
+.table-state span {
+  background-color: #57c975;
   height: 40px;
   color: white;
 }
@@ -239,11 +217,58 @@
   align-items: center;
   margin-top: 10px;
 }
-
-.option-table ul li.alt {
+.option-table ul li.option-link.alt {
   background-color: red;
+}
+
+.option-table ul li.option-link.check {
+  background-color: #2ecc71; ;
 }
 
 .option-table ul li.cog {
   background-color: var(--primary-color);
+}
+
+/* Estilos para la segunda sección de paginación */
+.pagination.bottom {
+  margin-top: 10px;
+}
+
+/* Estilos para la paginación */
+.pagination {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.pagination ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+.pagination li {
+  margin-right: 5px;
+}
+
+.pagination a {
+  display: block;
+  padding: 8px 12px;
+  background-color: var(
+    --primary-color
+  ); /* Cambiado a tu color primario definido en index.css */
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: var(
+    --primary-color-light
+  ); /* Cambiado a tu color primario claro definido en index.css */
+}
+
+.inline {
+  display: flex;
+  justify-content: space-between; 
 }

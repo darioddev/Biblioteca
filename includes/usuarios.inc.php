@@ -1,171 +1,145 @@
 <?php
-$initalize = (isset($_GET["row"]) && !empty(trim($_GET["row"]) && $_GET["row"] >= 0) ? $_GET["row"] : 5);
-$usuarios = sql_get_all_usuarios(0, $initalize);
-$maxFilas = 20;
+$initalize = initializeRow("row");
 
-if (count($usuarios) < $initalize) {
-    $initalize = $maxFilas;
-}
+$pages = pages($_GET, $initalize, 'Usuarios');
+
+$usuarios = [];
+
+initializeSession('columnaOrdenacion', 'tipoOrdenacion', 'row', 'page', 'nombre', 'ASC', $initalize, 1);
 
 if (isset($_GET["remove"]) && !empty(trim($_GET["remove"]))) {
-    $var = sql_update_row($_GET["remove"]);
-    header("Location:?ruta=usuarios");
+    // Realizar la eliminación del usuario
+    sql_update_rol($_GET["remove"]);
+
+    $redireccion = "?ruta=usuarios&rutas=4";
+
+    if (isset($_GET["search"]) && isset($_GET["type"])) {
+        $redireccion .= "&search=" . $_GET["search"] . "&type=" . $_GET["type"] . "";
+        if (isset($_GET["page"]) && !empty(trim($_GET["page"]))) {
+            $redireccion .= "&page=" . $_GET["page"];
+        }
+    }
+
+    header("Location: $redireccion");
     die();
 }
-?>
 
 
-<?php
-require_once("./includes/nav.inc.php");
+if (isset($_GET["page"])) {
+    $_SESSION["page"] = $_GET["page"];
+}
+
+if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
+    $usuarios = sql_search("ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO", 'Usuarios', $_GET['type'], '%' . $_GET['search'] . '%');
+    $pages = pages($_GET, $initalize, (int) count($usuarios));
+
+    $usuarios = sql_search("ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO", 'Usuarios', $_GET['type'], '%' . $_GET['search'] . '%', $pages[0], $initalize);
+    $route = "?ruta=usuarios&row=" . $_SESSION['row'] . "&search=" . $_GET['search'] . "&type=" . $_GET['type'] . "";
+
+} elseif (
+    isset($_GET["order"]) && !empty(trim($_GET["order"]))
+    && isset($_GET["column"]) && !empty(trim($_GET["column"]))
+) {
+    $_SESSION['row'] = $_GET['row'];
+    $_SESSION['columnaOrdenacion'] = $_GET['column'];
+    $_SESSION['tipoOrdenacion'] = $_GET['order'];
+
+    $usuarios = sql_get_all_usuarios($pages[0], $initalize, $_GET["column"], $_GET["order"]);
+    $route = "?ruta=usuarios&row=" . $_SESSION['row'] . "&column=" . $_SESSION['columnaOrdenacion'] . "&order=" . $_SESSION['tipoOrdenacion'] . "";
+
+} else {
+    header("Location: ?ruta=usuarios&row=" . $_SESSION['row'] . "&column=" . $_SESSION['columnaOrdenacion'] . "&order=" . $_SESSION['tipoOrdenacion'] . "&page=" . $_SESSION["page"]);
+    die();
+}
+
+if (empty($usuarios)) {
+    $pages[1] = 1;
+}
+
+if (count($usuarios) < $initalize) {
+    $initalize = MAX_FILAS;
+}
+
+
 ?>
+<?php require_once("./includes/nav.inc.php"); ?>
 
 <link rel="stylesheet" href="./assets/css/usuarios.css">
 <section class="home">
     <div class="text">
         PANEL DE USUARIO
     </div>
-    <div class="table-options">
-        <div class="table-options-row">
-            <span>Mostrar
-                <input type="number" name="rows" id="rows" value="<?php echo $initalize ?>" min="0" max="20"
-                    maxlength="3">
-                filas
-            </span>
-            </span>
 
-            <script>
-                document.getElementById("rows").addEventListener("input", (e) => {
-                    if (e.target.value > <?php echo $maxFilas; ?> || e.target.value <= 0) {
-                        e.target.value = <?php echo $initalize; ?>;
-                    }
-                    window.location.href = `?ruta=usuarios&row=${e.target.value}`;
-                    document.getElementById("rows")
-                });
-            </script>
+    <?php
+    if (isset($usuarios) && !empty($usuarios)) {
+        ?>
+        <div class="table-options">
+            <div class="table-options-row">
+                <span>
+                    <input type="number" name="rows" id="rows" value="<?php echo $initalize ?>" min="0" max="20"
+                        maxlength="3">
 
-        </div>
-
-        <div class="table-options-order">
-            <div>
-                <label for="ordenarPor">Ordenar por:</label>
-                <select id="ordenarPor">
-                    <optgroup label="ASCENDENTE">
-                        <option value="NOMBRE">NOMBRE</option>
-                        <option value="NOMBRE_USUARIO">NOMBRE USUARIO</option>
-                        <option value="CORREO_ELECTRONICO">CORREO ELECTRONICO</option>
-                        <option value="FECHA_REGISTRO">FECHA REGISTRO</option>
-                        <option value="ROL">ROL</option>
-                    </optgroup>
-                    <optgroup label="DESCENDENTE">
-                        <option value="NOMBRE_DESC">NOMBRE DESCENDENTE</option>
-                        <option value="NOMBRE_USUARIO_DESC">NOMBRE USUARIO DESCENDENTE</option>
-                        <option value="CORREO_ELECTRONICO_DESC">CORREO ELECTRONICO DESCENDENTE</option>
-                        <option value="FECHA_REGISTRO_DESC">FECHA REGISTRO DESCENDENTE</option>
-                        <option value="ROL_DESC">ROL DESCENDENTE</option>
-                    </optgroup>
-                    <optgroup label="ESTADO">
-                        <option value="ACTIVO">ACTIVO</option>
-                        <option value="INACTIVO">INACTIVO</option>
-                        <option value="TODOS" selected>TODOS</option>
-                    </optgroup>
-                </select>
+                </span>
             </div>
-        </div>
-
-        <div class="table-options-search">
-            <form class="form">
-                <button>
-                    <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img"
-                        aria-labelledby="search">
-                        <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
-                            stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round">
-                        </path>
-                    </svg>
-                </button>
-                <input class="input" placeholder="Buscar ... " required="" type="text" />
-                <button class="reset" type="reset">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div class="add">
-        <div class="add-link">
-            <a href="#" id="anadeUsuario">
-                <i class="bx bx-user-plus "></i>
-            </a>
-        </div>
-    </div>
-
-    </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>NOMBRE USUARIO</th>
-                <th>CORREO ELECTRONICO</th>
-                <th>FECHA REGISTRO</th>
-                <th>ROL</th>
-                <th>ESTADO</th>
-                <th>ACCIONES</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            foreach ($usuarios as $usuario) {
-                ?>
-                <tr>
-                    <?php
-                    foreach ($usuario as $propiedad => $value) {
-                        if ($propiedad == "ESTADO") {
-                            $value = $value ? "Activo" : "Inactivo";
-                            ?>
-                            <td class="table-state">
-                                <span>
-                                    <?php echo $value ?>
-                                </span>
-                            </td>
-                            <?php
-                        } else {
-                            ?>
-                            <td>
-                                <?php echo $value ?>
-                            </td>
-                            <?php
-                        }
-                        ?>
-                        <?php
-                    }
+            <div class="table-options-search">
+                <?php
+                if (!isset($_GET['search']) && !isset($_GET['type'])) {
                     ?>
-                    <td class="option-table">
-                        <ul>
-                            <li class="option-link cog">
-                                <a href="<?php echo dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?user=" . $usuario['CORREO_ELECTRONICO'] ?>"
-                                    data-action="modificado">
-                                    <i class="fas fa-user-cog"></i>
-                                </a>
-                            </li>
-                            <li class="option-link alt">
-                                <a href="?ruta=usuarios&remove=<?php echo $usuario['CORREO_ELECTRONICO'] ?>"
-                                    data-action="borrado">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </td>
                     <?php
-            }
+                    optionOrdenacion("table-options-order one", "ordenarPor", "UsuariosOrdenacion", $_SESSION, 'columnaOrdenacion', 'tipoOrdenacion');
+                    ?>
+                </div>
 
+                <?php
+                }
+                optionOrdenacion("table-options-order", "buscarPor", "UsuariosBuscador");
+                formSearch($_SERVER["PHP_SELF"] . "?ruta=usuarios&search=", "busqueda");
+                ?>
+        </div>
+        </div>
+
+        <div class="inline">
+            <?php
+            paginaLinks('pagination', $pages[1], $route);
             ?>
-        </tbody>
-    </table>
+            <?php
+            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ')
+                ?>
+        </div>
+        <?php
+    }
+    ?>
+    </div>
+
+
+    <?php
+    if (isset($usuarios) && empty($usuarios)) {
+        require_once("./includes/nofound.php");
+    } else {
+        $heads = ['ID', 'NOMBRE', 'NOMBRE USUARIO', 'CORREO ELECTRONICO', 'FECHA REGISTRO', 'ROL', 'ESTADO', 'ACCIONES'];
+        $icons = array(
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?user=", "fas fa-user-cog", "modificado"),
+            array("option-link alt", "?ruta=usuarios&remove=", "fas fa-trash-alt", "borrado"),
+            array("option-link check", "?ruta=usuarios&remove=", "fas fa-user-check", "reactivar")
+        );
+
+        tableAdd("table", $heads, $usuarios, $icons);
+    }
+    ?>
+
+    <?php
+    if (isset($usuarios) && !empty($usuarios)) {
+        paginaLinks('pagination', $pages[1], $route);
+    }
+    ?>
+
     </div>
 
 </section>
-<script src="./assets/js/nav.js" type="module"></script>
+
+<script>
+    const initializeRow = <?php echo json_encode($initalize); ?>;
+    const maxFilas = <?php echo MAX_FILAS; ?>;
+</script>
+
+<script src="./assets/js/index.js" type="module"></script>

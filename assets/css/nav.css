@@ -10,7 +10,7 @@
 :root {
     --body-color:#9B27B00D;
     --sidebar-color:#FFFFFF;
-    --primary-color: blue;
+    --primary-color: #207bb5;
     --primary-color-light: #9B27B00D;
     --toogle-color:#DDDDDD;
     --text-color:#707070;
@@ -24,6 +24,7 @@ body {
     min-height: 100vh;
     background-color: #FFFFFF;
     transition: var(--trans-05);
+    background-color: var(--body-color);
 }
 
 ::selection {

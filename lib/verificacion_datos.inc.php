@@ -1,4 +1,21 @@
 <?php
+//Funcion que comprueba la existencia de variables...
+function formularioDatosUsuario($datosFormulario)
+{
+    $errores_campos = [];
+    if (!validaExistenciaVaribale($datosFormulario['name']) || !validaNombreApellidos($datosFormulario['name']))
+        $errores_campos['name'] = 'No puede estar vacío y/o no puede contener caracteres especiales.';
+    if (!validaExistenciaVaribale($datosFormulario['last_name1']) || !validaNombreApellidos($datosFormulario['last_name1']))
+        $errores_campos['last_name1'] = 'No puede estar vacío y/o no puede contener caracteres especiales.';
+    if (validaExistenciaVaribale($datosFormulario['last_name2']) && !validaNombreApellidos($datosFormulario['last_name2']))
+        $errores_campos['last_name2'] = 'No puede estar vacío y/o no puede contener caracteres especiales.';
+    if (!validaExistenciaVaribale($datosFormulario['user']) || !validaUsuario($datosFormulario['user']))
+        $errores_campos['user'] = 'No puede estar vacío y/o no es válido.';
+    if (!validaExistenciaVaribale($datosFormulario['email']) || !validaEmail($datosFormulario['email']))
+        $errores_campos['email'] = 'No puede estar vacío y/o debe contener una dirección de correo electrónico válida, por ejemplo, "nombre@ejemplo.com".';
+    return $errores_campos;
+}
+
 //Funcion que valida que los campos estan declarados y no son vacios
 function validaExistenciaVaribale($variable): bool
 {

@@ -6,7 +6,6 @@
                 <?php echo $_SESSION['user'] ?>
             </span>
             <span class="rol">
-                <?php echo sql_get_rol($_SESSION['user'])["ROL"] ?>
             </span>
         </div>
         <i class="bx bx-menu toogle"></i>
@@ -42,8 +41,8 @@
                 </li>
 
                 <li class="nav-link">
-                    <a href="">
-                        <i class="bx bx-home-alt icon"></i>
+                    <a href="?ruta=autores">
+                        <i class="fas fa-user-secret icon"></i>
                         <span class="text nav-text">Autores</span>
                     </a>
                 </li>
