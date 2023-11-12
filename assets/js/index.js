@@ -71,6 +71,9 @@ document.querySelector("table").addEventListener("click", async (event) => {
           showResponse(formData,response,"editorial","editorial")
           break;
         }
+        case "libros" : {
+          break;
+        }
     }
 
  

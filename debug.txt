@@ -1,0 +1,35 @@
+Array
+(
+)
+
+Array
+(
+)
+
+Array
+(
+)
+
+Array
+(
+)
+
+Array
+(
+    [action] => insertarLibro
+)
+
+Array
+(
+    [Archivo] => Array
+        (
+            [name] => _125266468_gettyimages-200206712-001.webp
+            [full_path] => _125266468_gettyimages-200206712-001.webp
+            [type] => image/webp
+            [tmp_name] => /opt/lampp/temp/php5y09k3
+            [error] => 0
+            [size] => 8862
+        )
+
+)
+

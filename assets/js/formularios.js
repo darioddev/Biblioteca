@@ -3,26 +3,114 @@ import { showErrorMessage, showSuccessMessage } from "./alert-functions.js";
 
 import { route } from "./path.js";
 
-/* */
+const enviarImagen = async () => {
+  const { value: file } = await Swal.fire({
+    title: "Selecciona una imagen",
+    input: "file",
+    inputAttributes: {
+      accept: "image/*",
+      "aria-label": "Introduce una imagen; este campo es obligatorio",
+    },
+  });
 
+  if (file) {
+    const formData = new FormData();
+    formData.append("Archivo", file);
 
+    try {
+      const response = await axios.post(
+        `${
+          window.parent.location.origin
+        }${window.parent.location.pathname.replace(
+          /\/index\.php$/,
+          ""
+        )}/procesa_imagen.inc.php?token=libros`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-// Definición de la función
+      console.log(response.data);
+
+      if (response.data.success) {
+        // Procesar el éxito, si es necesario
+        console.log("Éxito:", response.data.success);
+        return response.data.nombreArchivo; // Retornar el valor de file después de la subida exitosa
+      } else {
+        // Mostrar mensaje de error en caso de error
+        console.error("Error:", response.data.error);
+      }
+    } catch (error) {
+      // Manejar errores de red u otros errores
+      console.error(error);
+    }
+  }
+
+  return null; // Retornar null si no se selecciona ningún archivo
+};
+
+// Función para enviar el formulario
+const enviarFormulario = async (formData, _action, message) => {
+  console.log("entre a enviar");
+  try {
+    // Realiza la petición con los datos del formulario
+    const response = await postData(`${route}`, formData);
+
+    if (response.errors && response.errors.length > 0) {
+      const errorMessage = response.errors
+        .map((err) => `<strong>${err.text}</strong>: ${err.message}`)
+        .join("<br>");
+      showErrorMessage(
+        "Oops...",
+        `Algo ha salido mal! Vuelve a intentarlo <br> ${errorMessage}`
+      );
+    } else if (response.error) {
+      showErrorMessage(
+        "Oops...",
+        `Algo ha salido mal! Vuelve a intentarlo <br> ${response.error}`
+      );
+    } else {
+      if (formData.action === "insertarLibro") {
+        const nombreArchivo = await enviarImagen();
+        if (nombreArchivo === null) throw new Error("Imagen no introducida");
+        response.data.nombreArchivo = nombreArchivo;
+        response.data.action = "insertarLibroSucces";
+        await postData(route, response.data);
+        showSuccessMessage(`${message} añadido correctamente`);
+      }else {
+        showSuccessMessage(`${message} añadido correctamente`);
+      }
+    }
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    showErrorMessage("Oops...", "Algo ha salido mal! Vuelve a intentarlo");
+  }
+};
+
 export const formularioAnade = async (title = "", html, _action, message) => {
   const { value: formData } = await Swal.fire({
     title,
-    html: html, // Se pasa el HTML proporcionado como argumento
+    html,
     focusConfirm: false,
     showCancelButton: true,
     preConfirm: () => {
-      // Selecciona los valores del formulario dinámicamente
       const formValues = {};
       const formInputs = document.querySelectorAll(
         "#usuarioForm input, #usuarioForm select"
       );
+
       formInputs.forEach((input) => {
         const inputId = input.id;
-        formValues[inputId] = input.value;
+
+        // Verifica si el campo es de tipo 'file'
+        if (input.type === "file") {
+          formValues[inputId] = input.files[0]; // Almacena el archivo directamente
+        } else {
+          formValues[inputId] = input.value;
+        }
       });
 
       return {
@@ -33,32 +121,8 @@ export const formularioAnade = async (title = "", html, _action, message) => {
   });
 
   if (formData) {
-    try {
-      console.log(formData);
-      // Hacer la petición con los datos del formulario
-      const response = await postData(`${route}`, JSON.stringify(formData));
-      console.log(response);
-
-      if (response.errors && response.errors.length > 0) {
-        const errorMessage = response.errors
-          .map((err) => `<strong>${err.text}</strong>: ${err.message}`)
-          .join("<br>");
-        showErrorMessage(
-          "Oops...",
-          `Algo ha salido mal! Vuelve a intentarlo <br> ${errorMessage}`
-        );
-      } else if (response.error) {
-        showErrorMessage(
-          "Oops...",
-          `Algo ha salido mal! Vuelve a intentarlo <br> ${response.error}`
-        );
-      } else {
-        showSuccessMessage(`${message} añadido correctamente`);
-      }
-    } catch (error) {
-      console.error("Error en la petición:", error);
-      showErrorMessage("Oops...", "Algo ha salido mal! Vuelve a intentarlo");
-    }
+    console.log(formData);
+    await enviarFormulario(formData, _action, message);
   }
 };
 
@@ -232,6 +296,7 @@ export const showResponse = async (
             setTimeout(() => {
               location.reload();
             }, 2000);
+            
           } catch (error) {
             console.error(`NO SE HA PODIDO ACTUALIZAR: ${error}`);
             showErrorMessage(

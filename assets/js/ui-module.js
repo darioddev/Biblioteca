@@ -4,7 +4,7 @@ import {
 } from "./alert-functions.js";
 import { formularioAnade } from "./formularios.js";
 import { routeGet } from "./path.js";
-import { getData } from "./axios-functions.js";
+import { getData, postData } from "./axios-functions.js";
 import { route } from "./path.js";
 
 const selects = async (routedata) => {
@@ -179,7 +179,7 @@ export const initializeUserInterface = async () => {
     const initializeRow = window.initializeRow;
     const maxFilas = window.maxFilas;
 
-    anadeUsuario.addEventListener("click", (e) => {
+    anadeUsuario.addEventListener("click", async (e) => {
       e.preventDefault();
       const action = e.target.dataset.action;
       console.log(action);
@@ -254,33 +254,32 @@ export const initializeUserInterface = async () => {
             <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" required>
       
             <label for="fecha_creacion">Fecha de Creacion:</label>
-            <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;">
+            <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;" >
 
           </form>`;
           console.log("Muestra formulario para añadir autor");
           break;
 
         case "libros":
-          title = "Registro de un nuevo editorial";
-          _action = "insertarEditorial";
-          message = "editorial";
+          title = "Registro de un nuevo libro";
+          _action = "insertarLibro";
+          message = "libro";
           formulario = `
-          <form action="/" method="POST" style="display: flex; flex-direction: column;">
+          <form id="usuarioForm">
           <label for="Titulo">Titulo:</label>
           <input type="text" id="Titulo" class="swal2-input" placeholder="Nombre" required>
-    
-            <label for="ID_Autor">Seleccione el autor :</label>
-            <select id="ID_Autor" class="swal2-select">
+      
+          <label for="ID_Autor">Seleccione el autor :</label>
+          <select id="ID_Autor" class="swal2-select">
               ${optionsHTMLAutor}
-            </select>
-            <label for="ID_Editorial">Seleccione la editorial :</label>
-            <select id="ID_Editorial" class="swal2-select">
+          </select>
+          
+          <label for="ID_Editorial">Seleccione la editorial :</label>
+          <select id="ID_Editorial" class="swal2-select">
               ${optionsHTMLEditorial}
-            </select>
-            <label for="Archivo" style="margin-top: 10px;">Seleccione una imagen :</label>
-            <input type="file" id="Archivo" name="archivo" accept=".jpg, .wbep, .png" style="margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-
-          </form>`;
+          </select>
+           </form>`;
+          console.log("Muestra formulario para añadir autor");
           break;
       }
 
@@ -313,7 +312,6 @@ export const initializeUserInterface = async () => {
         }
       });
     });
-    console.log("ups.");
 
     selectOrdenacion.addEventListener("change", (e) => {
       actualizarURL(e.target.dataset.name);

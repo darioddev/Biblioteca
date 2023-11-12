@@ -76,9 +76,6 @@ if (count($usuarios) < $initalize) {
 <section class="home">
     <div class="text">
         PANEL DE EDITORIALES
-        <?php 
-        echo dirname($_SERVER["PHP_SELF"])."/assets/images/fondo.webp"
-        ?>
     </div>
     <?php
     if (isset($usuarios) && !empty($usuarios)) {

@@ -776,4 +776,41 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
     }
 }
 
-// Ejemplo de uso
+function sql_valida_libro($titulo) {
+    try {
+        $mysqli = sql_conect();
+
+        // Escapar la cadena del título
+        $titulo = mysqli_real_escape_string($mysqli, $titulo);
+
+        // Preparar la consulta SQL
+        $consulta = $mysqli->prepare("SELECT COUNT(*) FROM Libros WHERE Titulo = ?");
+
+        // Vincular parámetros
+        $consulta->bind_param('s', $titulo);
+
+        // Ejecutar la consulta
+        $consulta->execute();
+
+        // Vincular el resultado a una variable
+        $consulta->bind_result($resultado);
+
+        // Obtener el valor
+        $consulta->fetch();
+
+        // Cerrar la consulta
+        $consulta->close();
+
+        // Devolver true si el libro existe, false si no existe
+        return $resultado > 0;
+    } catch (Exception $e) {
+        // Manejar la excepción según tus necesidades
+        // Puedes registrar el error, lanzar una excepción personalizada, etc.
+        error_log($e->getMessage());
+        return false; // Devuelve false en caso de error
+    } finally {
+        // Cerrar la conexión
+        $mysqli->close();
+    }
+}
+

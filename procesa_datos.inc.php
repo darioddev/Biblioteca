@@ -78,17 +78,35 @@ if (!empty($data)) {
             $response = proccesaData($errores_campos, $data, 'Editoriales', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
-
+            /* Este insertar libro solo va a veirifcar el parametro de nombre*/
+        case 'insertarLibro':
+            if(!validaExistenciaVaribale($data['Titulo']) ||  !validaNombreApellidos($data['Titulo'])) {
+                echo json_encode(['error' => 'El titulo esta vacio y/o tiene caracteres especiales', 'errors' => ''], JSON_UNESCAPED_UNICODE);
+            }else{
+                echo json_encode(['data' => $data], JSON_UNESCAPED_UNICODE);
+            }
+            break;
+            /* Esta accion es la que inserta los datos a la base de datos con la ruta de la imagen
+            Esto es debido a que la logica de la imagen se en encuentra en otro fichero "procesa_imagen.inc.php"*/
+        case 'insertarLibroSucces':
+            $errores_campos=[];
+            $array = [
+                'titulo' => $data['Titulo'],
+                'ID_Autor' => $data['ID_Autor'],
+                'ID_Editorial' => $data['ID_Editorial'],
+                'Imagen' => $data['nombreArchivo'],
+            ];
+            $response = proccesaData($errores_campos, $data, 'Libros', $array);
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            break;
         default:
             // Acción no reconocida
             echo json_encode(['error' => 'Acción no válida.']);
             break;
-        case 'insertarLibro' :
-            echo json_encode($data, JSON_UNESCAPED_UNICODE);
-        }
-
-
     }
+
+
+}
 
 
 if (isset($_GET['user']) && !empty($_GET['user'])) {
