@@ -1,10 +1,10 @@
 <?php
-function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColumna = '', $nameOrdenacion = '')
+function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColumna = '', $nameOrdenacion = '' ,$data = '')
 {
     ?>
     <div class="<?php echo $classname ?>">
         <div>
-            <select id=<?php echo $idSelect ?>>
+            <select id=<?php echo $idSelect ?> data-name="<?php echo $data?>">
                 <?php
                 switch ($tipo) {
                     case "UsuariosOrdenacion":

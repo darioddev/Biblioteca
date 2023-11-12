@@ -26,7 +26,7 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                         if ($propiedad == "ESTADO") {
                             $value = $value ? "Activo" : "Inactivo";
                             ?>
-                            <td class="table-state">
+                            <td class="table-state delete">
                                 <span>
                                     <?php echo $value ?>
                                 </span>
@@ -44,7 +44,7 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                         <td class="option-table">
                             <ul>
                                 <?php
-                                iconAddLi($dataIcon[0][0], $dataIcon[0][1] . $dato['ID'], $dataIcon[0][2], $dataIcon[0][3]);
+                                iconAddLi($dataIcon[0][0], $dataIcon[0][1] . $dato['ID'], $dataIcon[0][2], $dataIcon[0][3] , $dataIcon[0][4]);
                                 iconAddLi($dataIcon[1][0], $dataIcon[1][1] . $dato['ID'], $dataIcon[1][2], $dataIcon[1][3]);
                                 iconAddLi($dataIcon[2][0], $dataIcon[2][1] . $dato['ID'], $dataIcon[2][2], $dataIcon[2][3]);
                                 ?>

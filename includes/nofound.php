@@ -9,7 +9,7 @@
             <a href="<?php echo $_SERVER["PHP_SELF"] . "?ruta=home"?>">Volver a home</a>
         </button>
         <button class="custom-button">
-            <a href="<?php echo $_SERVER["PHP_SELF"] . "?ruta=usuarios"?>">Reiniciar página</a>
+        <a href="<?php echo $_SERVER["PHP_SELF"] . "?ruta=" . (isset($_GET['ruta']) ? $_GET['ruta'] : "home"); ?>">Reiniciar página</a>
         </button>
     </div>
 </div>

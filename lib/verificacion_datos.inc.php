@@ -16,6 +16,28 @@ function formularioDatosUsuario($datosFormulario)
     return $errores_campos;
 }
 
+function formularioDatosAutor($datosFormulario)
+{
+    $errores_campos = [];
+    $errores_mensajes = [
+        'nombre' => 'El campo nombre no puede estar vacío y/o no puede contener caracteres especiales.',
+        'apellido' => 'El campo apellido no puede estar vacío y/o no puede contener caracteres especiales.',
+        'fecha_nacimiento' => 'El campo fecha de nacimiento no puede estar vacío.',
+    ];
+
+    if (empty($datosFormulario['nombre']) || !validaNombreApellidos($datosFormulario['nombre'])) {
+        $errores_campos['nombre'] = $errores_mensajes['nombre'];
+    }
+    if (empty($datosFormulario['apellido']) || !validaNombreApellidos($datosFormulario['apellido'])) {
+        $errores_campos['apellido'] = $errores_mensajes['apellido'];
+    }
+    if (empty($datosFormulario['fecha_nacimiento'])) {
+        $errores_campos['fecha_nacimiento'] = $errores_mensajes['fecha_nacimiento'];
+    }
+
+    return $errores_campos;
+}
+
 //Funcion que valida que los campos estan declarados y no son vacios
 function validaExistenciaVaribale($variable): bool
 {

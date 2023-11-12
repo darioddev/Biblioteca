@@ -178,19 +178,25 @@
 
 .table th,
 .table td {
-  border: 1px solid firebrick;
+  border: 1px solid var(--primary-color);
+  color: var(--text-color);
   padding: 8px;
   text-align: center;
 }
 
 .table th {
   background-color: #f2f2f2;
+  color: var(--text-color);
 }
 
 .table-state span {
-  background-color: #57c975;
-  height: 40px;
-  color: white;
+  height: 50px;
+  border-radius: 5px;
+  padding: 5px;
+  color: black;
+}
+.table-state span.delete{
+  background-color: red;
 }
 
 .option-table {

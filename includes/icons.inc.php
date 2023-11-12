@@ -1,10 +1,10 @@
 <?php
-function iconAddDiv($classname, $classname2, $id, $icon, $href = "#")
+function iconAddDiv($classname, $classname2, $id, $icon, $data = '' , $href = "")
 { ?>
     <div class="<?php echo $classname; ?>">
-        <div class="<?php echo $classname2; ?>">
-            <a href=<?php echo $href ?> id="<?php echo $id; ?>">
-                <i class="<?php echo $icon; ?>"></i>
+        <div class="<?php echo $classname2; ?>" >
+            <a href="<?php echo $href ?>" id="<?php echo $id; ?>" >
+                <i class="<?php echo $icon; ?>" data-action="<?php echo $data?>"></i>
             </a>
         </div>
     </div>
@@ -15,7 +15,7 @@ function iconAddLi($classname, $route, $icon, $action = '' , $action2= '')
 {
     ?>
     <li class="<?php echo $classname ?>">
-        <a href="<?php echo $route ?>" data-action="<?php echo $action ?>" data-name="<?php echo $action2?>">
+        <a href="<?php echo $route ?>" data-action="<?php echo $action ?>" data-name="<?php echo $action2 ?>">
             <i class="<?php echo $icon ?>"></i>
         </a>
     </li>

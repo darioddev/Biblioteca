@@ -7,11 +7,15 @@ $usuarios = [];
 
 initializeSession('columnaOrdenacion', 'tipoOrdenacion', 'row', 'page', 'nombre', 'ASC', $initalize, 1);
 
+if(isset($_SESSION['row']) && $_SESSION['row'] < 1) {
+    $_SESSION['row'] = 5 ;
+}
+
 if (isset($_GET["remove"]) && !empty(trim($_GET["remove"]))) {
     // Realizar la eliminación del usuario
-    sql_update_rol($_GET["remove"]);
+    sql_update_estado('Usuarios',$_GET["remove"]);
 
-    $redireccion = "?ruta=usuarios&rutas=4";
+    $redireccion = "?ruta=usuarios";
 
     if (isset($_GET["search"]) && isset($_GET["type"])) {
         $redireccion .= "&search=" . $_GET["search"] . "&type=" . $_GET["type"] . "";
@@ -28,6 +32,7 @@ if (isset($_GET["remove"]) && !empty(trim($_GET["remove"]))) {
 if (isset($_GET["page"])) {
     $_SESSION["page"] = $_GET["page"];
 }
+
 
 if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
     $usuarios = sql_search("ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO", 'Usuarios', $_GET['type'], '%' . $_GET['search'] . '%');
@@ -56,7 +61,7 @@ if (empty($usuarios)) {
     $pages[1] = 1;
 }
 
-if (count($usuarios) < $initalize) {
+if (count($usuarios) < $initalize || $initalize < 0) {
     $initalize = MAX_FILAS;
 }
 
@@ -76,7 +81,7 @@ if (count($usuarios) < $initalize) {
         <div class="table-options">
             <div class="table-options-row">
                 <span>
-                    <input type="number" name="rows" id="rows" value="<?php echo $initalize ?>" min="0" max="20"
+                    <input type="number" name="rows" id="rows" value="<?php echo $_SESSION['row'] ?>" min="0" max="20"
                         maxlength="3">
 
                 </span>
@@ -86,13 +91,13 @@ if (count($usuarios) < $initalize) {
                 if (!isset($_GET['search']) && !isset($_GET['type'])) {
                     ?>
                     <?php
-                    optionOrdenacion("table-options-order one", "ordenarPor", "UsuariosOrdenacion", $_SESSION, 'columnaOrdenacion', 'tipoOrdenacion');
+                    optionOrdenacion("table-options-order one", "ordenarPor", "UsuariosOrdenacion", $_SESSION, 'columnaOrdenacion', 'tipoOrdenacion','usuarios');
                     ?>
                 </div>
 
                 <?php
                 }
-                optionOrdenacion("table-options-order", "buscarPor", "UsuariosBuscador");
+                optionOrdenacion("table-options-order", "buscarPor", "UsuariosBuscador",'usuarios');
                 formSearch($_SERVER["PHP_SELF"] . "?ruta=usuarios&search=", "busqueda");
                 ?>
         </div>
@@ -103,7 +108,7 @@ if (count($usuarios) < $initalize) {
             paginaLinks('pagination', $pages[1], $route);
             ?>
             <?php
-            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ')
+            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ' , 'usuarios')
                 ?>
         </div>
         <?php
@@ -118,7 +123,7 @@ if (count($usuarios) < $initalize) {
     } else {
         $heads = ['ID', 'NOMBRE', 'NOMBRE USUARIO', 'CORREO ELECTRONICO', 'FECHA REGISTRO', 'ROL', 'ESTADO', 'ACCIONES'];
         $icons = array(
-            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?user=", "fas fa-user-cog", "modificado"),
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?user=", "fas fa-user-cog", "modificado","usuarios"),
             array("option-link alt", "?ruta=usuarios&remove=", "fas fa-trash-alt", "borrado"),
             array("option-link check", "?ruta=usuarios&remove=", "fas fa-user-check", "reactivar")
         );
@@ -142,4 +147,3 @@ if (count($usuarios) < $initalize) {
     const maxFilas = <?php echo MAX_FILAS; ?>;
 </script>
 
-<script src="./assets/js/index.js" type="module"></script>
