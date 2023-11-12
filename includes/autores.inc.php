@@ -76,7 +76,7 @@ if (count($usuarios) < $initalize) {
 
 <section class="home">
     <div class="text">
-        PANEL DE AUTORES
+        PANEL DE EDITORIALES
     </div>
     <?php
     if (isset($usuarios) && !empty($usuarios)) {
@@ -124,7 +124,7 @@ if (count($usuarios) < $initalize) {
     } else {
         $heads = ['ID', 'NOMBRE', 'APELLIDO', 'FECHA NACIMIENTO', 'FECHA CREACION', 'FECHA_MODIFICACION', 'ESTADO', 'ACCIONES'];
         $icons = array(
-            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?autor=", "fas fa-user-cog", "modificado","autores"),
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&autor=", "fas fa-user-cog", "modificado","autores"),
             array("option-link alt", "?ruta=autores&remove=", "fas fa-trash-alt", "borrado"),
             array("option-link check", "?ruta=autores&remove=", "fas fa-user-check", "reactivar")
         );

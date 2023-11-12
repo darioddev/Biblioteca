@@ -1,10 +1,10 @@
 <?php
-function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColumna = '', $nameOrdenacion = '' ,$data = '')
+function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColumna = '', $nameOrdenacion = '', $data = '')
 {
     ?>
     <div class="<?php echo $classname ?>">
         <div>
-            <select id=<?php echo $idSelect ?> data-name="<?php echo $data?>">
+            <select id=<?php echo $idSelect ?> data-name="<?php echo $data ?>">
                 <?php
                 switch ($tipo) {
                     case "UsuariosOrdenacion":
@@ -98,11 +98,51 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
             </div>
             <?php
             break;
+                    case "EditorialOrdenacion":
+                        ?>
+            <option value="column=nombre&order=ASC" <?php echo ($SESSION[$nameColumna] == 'nombre' && $SESSION[$nameOrdenacion] == 'ASC') || isset($_GET['search']) ? 'selected' : ''; ?>>Ordenar
+                por...</option>
+            <optgroup label="ASCENDENTE">
+                <option value="column=ID&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>ID</option>
+                <option value="column=nombre&order=ASC">NOMBRE</option>
+                <option value="column=fecha_creacion&order=ASC" <?php echo ($SESSION[$nameColumna] == 'fecha_creacion' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>FECHA CREACION</option>
+                <option value="column=fecha_modificacion&order=ASC" <?php echo ($SESSION[$nameColumna] == 'fecha_modificacion' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>FECHA MODIFICACION</option>
+            </optgroup>
+            <optgroup label="DESCENDENTE">
+                <option value="column=ID&order=DESC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ID</option>
+                <option value="column=nombre&order=DESC" <?php echo ($SESSION[$nameColumna] == 'nombre' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE</option>
+                <option value="column=fecha_creacion&order=DESC" <?php echo ($_SESSION[$nameColumna] == 'fecha_creacion' && $_SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>FECHA CREACION</option>
+                <option value="column=fecha_modificacion&order=DESC" <?php echo ($SESSION[$nameColumna] == 'fecha_modificacion' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>FECHA MODIFICACION</option>
+            <optgroup label="ESTADO">
+                <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
+                <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
+            </optgroup>
+            </select>
+            </div>
+            <?php
+            break;
+                    case "EditorialBuscador";
+                        ?>
+            <optgroup label="Por defecto : Nombre"></optgroup>
+            <option value="NOMBRE">Buscar por... </option>
+            <option value="ID">ID</option>
+            <optgroup label="Para buscar por fechas solo se admite"></optgroup>
+            <optgroup label="numeros ej : junio: 06 "></optgroup>
+            <option value="FECHA_CREACION">FECHA CREACION</option>
+            <option value="FECHA_MODIFICACION">FECHA MODIFICACION</option>
+            <optgroup label="Para ver inactivos ponga : false"></optgroup>
+            <optgroup label="Para ver activos ponga : 1"></optgroup>
+            <option value="ESTADO">ESTADO</option>
+            </select>
+            </div>
+            </div>
+        <?php
                 }
 
                 ?>
 
     <?php
+
 }
 
 function formSearch($route, $id)

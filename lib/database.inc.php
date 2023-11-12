@@ -495,65 +495,62 @@ function sql_query_update($tabla, $column, $valor, $id)
 {
     try {
         $mysqli = sql_conect();
-
         $consulta = $mysqli->stmt_init();
 
-        // Validar y actualizar según la columna especificada
         switch ($column) {
             case "nombre":
-                if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor)) {
-                    throw new Exception("El nombre no puede estar vacío y/o no puede contener caracteres especiales.");
-                }
-                break;
-
             case "apellido":
-                if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor) ) {
-                    throw new Exception("El apellido no puede estar vacío y/o no puede contener caracteres especiales.");
+                if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor)) {
+                    throw new Exception("El $column no puede estar vacío y/o no puede contener caracteres especiales.");
                 }
                 break;
 
             case "apellido2":
-                if (validaExistenciaVaribale($valor) && !validaNombreApellidos($valor)) {
-                    throw new Exception("El apellido 2 no puede contener caracteres especiales.");
+                if (!empty($valor) && !validaNombreApellidos($valor)) {
+                    throw new Exception("El $column no puede contener caracteres especiales.");
                 }
                 break;
 
             case "nombre_usuario":
                 if (!validaExistenciaVaribale($valor) || !validaUsuario($valor)) {
-                    throw new Exception("El usuario no puede estar vacío y/o no es válido.");
+                    throw new Exception("El $column no puede estar vacío y/o no es válido.");
                 }
-                if (validaExistenciaVaribale($valor) && sql_valida_usuario_correo($valor)) {
-                    throw new Exception("El usuario introducido ya existe.");
+                if (sql_valida_usuario_correo($valor)) {
+                    throw new Exception("El $column introducido ya existe.");
                 }
                 break;
 
             case "correo_electronico":
-                if (!validaExistenciaVaribale($valor) || !validaEmail($valor) && trim($valor) === '') {
-                    throw new Exception("El correo no puede estar vacío y/o debe contener una dirección de correo electrónico válida.");
+                if (!validaExistenciaVaribale($valor) || (!validaEmail($valor) && trim($valor) !== '')) {
+                    throw new Exception("El $column no puede estar vacío y/o debe contener una dirección de correo electrónico válida.");
                 }
-                if (validaExistenciaVaribale($valor) && sql_valida_usuario_correo($valor)) {
-                    throw new Exception("El correo electronico introducido ya existe.");
+                if (sql_valida_usuario_correo($valor)) {
+                    throw new Exception("El $column introducido ya existe.");
                 }
                 break;
-            case "fecha_registro": {
-                    break;
+
+            case "fecha_nacimiento":
+            case "fecha_creacion":
+                if (empty($valor)) {
+                    throw new Exception("La $column no puede estar vacío.");
                 }
-            case "rol": {
-                    break;
-                }
+                break;
 
             default:
+                if (empty($valor) || $valor == '') {
+                    throw new Exception("No pueden haber campos vacíos.");
+                }
                 break;
         }
-        
-        $consulta->prepare('UPDATE ' . $tabla . ' SET ' . $column . ' = ? WHERE ID = ?');
 
-        $consulta->bind_param('ss', $valor, $id);
+        $consulta->prepare("UPDATE $tabla SET $column = ? WHERE ID = ?");
+        $consulta->bind_param("ss", $valor, $id);
 
         $success = $consulta->execute();
 
-        if (!$success)
-            return $consulta->error;
+        if (!$success) {
+            throw new Exception($consulta->error);
+        }
 
         return true;
 
@@ -565,6 +562,8 @@ function sql_query_update($tabla, $column, $valor, $id)
         }
     }
 }
+
+
 /**
  * Actualiza el estado de un usuario en la base de datos.
  *

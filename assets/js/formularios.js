@@ -91,7 +91,7 @@ export const showUserForm = (response) => {
         <label for="FECHA_REGISTRO">Fecha de Registro:</label>
         <input type="date" id="FECHA_REGISTRO" class="swal2-input" value="${
           response.FECHA_REGISTRO
-        }" required>
+        }" required style="text-align: center;>
 
         <label for="CONTRASENA">Asignar una nueva contraseña : </label>
         <input type="password" id="CONTRASENA" class="swal2-input">
@@ -128,25 +128,58 @@ export const showUserForm = (response) => {
     },
   });
 };
+
+
 export const showAutorForm = (response) => {
   return Swal.fire({
     title: `Datos personales de autor : ${response.NOMBRE} ${response.APELLIDO}`,
     html: `<form id="usuarioForm">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" value="${response.NOMBRE}" required>
+
+    <label for="apellido">Apellido:</label>
+    <input type="text" id="apellido" class="swal2-input" placeholder="Apellido" value="${response.APELLIDO}" required>
+
+    <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+    <input type="date" id="fecha_nacimiento" class="swal2-input" value="${response.FECHA_NACIMIENTO}" required style="text-align: center;>
+
+    <label for="fecha_creacion">Fecha de Creacion:</label>
+    <input type="date" id="fecha_creacion" class="swal2-input" value="${response.FECHA_CREACION}" required style="text-align: center;>
+
+    <label for="fecha_modificacion">ULTIMA FECHA DE MODIFICACION:</label>
+    <input type="text" id="fecha_modificacion" class="swal2-input" placeholder="Nombre de Usuario" value="${response.FECHA_MODIFICACION}" disabled style="text-align: center;">
+
+  </form>`,
+
+
+    focusConfirm: false,
+    showCancelButton: true,
+    preConfirm: () => {
+      return {
+        nombre: document.getElementById("nombre").value ,
+        apellido: document.getElementById("apellido").value ,
+        fecha_nacimiento: document.getElementById("fecha_nacimiento").value ,
+        fecha_creacion : document.getElementById("fecha_creacion").value ,
+      };
+    },
+  });
+};
+
+export const showEditorialForm = (response) => {
+  return Swal.fire({
+    title: `Datos personales de autor : ${response.NOMBRE} `,
+    html: `<form id="usuarioForm">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" value="${response.NOMBRE}"required>
-      
-            <label for="apellido">Apellido:</label>
-            <input type="text" id="apellido" class="swal2-input" placeholder="Apellido" value="${response.APELLIDO}"required>
-      
-            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fecha_nacimiento" class="swal2-input" value="${response.FECHA_NACIMIENTO}"required>
 
             <label for="fecha_creacion">Fecha de Creacion:</label>
-            <input type="datetime-local" id="fecha_creacion" class="swal2-input" value="${response.FECHA_CREACION}"required>
-
+            <input type="date" id="fecha_creacion" class="swal2-input" value="${response.FECHA_CREACION}" required style="text-align: center;>
+        
             <label for="fecha_modificacion">ULTIMA FECHA DE MODIFICACION:</label>
             <input type="text" id="fecha_modificacion" class="swal2-input" placeholder="Nombre de Usuario" value="${response.FECHA_MODIFICACION}" disabled style="text-align: center;">
-      
+
+
+
           </form>`,
 
     focusConfirm: false,
@@ -154,13 +187,12 @@ export const showAutorForm = (response) => {
     preConfirm: () => {
       return {
         nombre: document.getElementById("nombre").value,
-        apellido: document.getElementById("apellido").value,
-        fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
         fecha_creacion: document.getElementById("fecha_creacion").value,
       };
     },
   });
 };
+
 
 export const showResponse = async (
   formData,
@@ -170,6 +202,7 @@ export const showResponse = async (
 ) => {
   if (formData) {
     try {
+
       const checkData = Object.fromEntries(
         Object.entries(formData).filter(
           ([key, value]) =>
@@ -177,14 +210,13 @@ export const showResponse = async (
         )
       );
 
+
       await Promise.all(
         Object.entries(checkData).map(async ([key, value]) => {
           try {
             const result = await getData(
-              `${route}?${paramt}=${response.ID}&${key}=${value}`
+              `${route}&${paramt}=${response.ID}&${key}=${value}`
             );
-            console.log()
-            console.log(result)
 
             if (
               result[1] !== undefined &&

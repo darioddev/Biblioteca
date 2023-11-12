@@ -123,7 +123,7 @@ if (count($usuarios) < $initalize || $initalize < 0) {
     } else {
         $heads = ['ID', 'NOMBRE', 'NOMBRE USUARIO', 'CORREO ELECTRONICO', 'FECHA REGISTRO', 'ROL', 'ESTADO', 'ACCIONES'];
         $icons = array(
-            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?user=", "fas fa-user-cog", "modificado","usuarios"),
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&user=", "fas fa-user-cog", "modificado","usuarios"),
             array("option-link alt", "?ruta=usuarios&remove=", "fas fa-trash-alt", "borrado"),
             array("option-link check", "?ruta=usuarios&remove=", "fas fa-user-check", "reactivar")
         );

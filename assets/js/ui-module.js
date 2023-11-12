@@ -1,4 +1,4 @@
-import { showConfirmationDialog } from "./alert-functions.js";
+import { showConfirmationDialog ,showSuccessMessage} from "./alert-functions.js";
 import { formularioAnade } from "./formularios.js";
 import { routeGet } from "./path.js";
 
@@ -141,6 +141,7 @@ export function initializeUserInterface() {
     anadeUsuario.addEventListener("click", (e) => {
       e.preventDefault();
       const action = e.target.dataset.action;
+      console.log(action)
       let title = undefined;
       let formulario = undefined;
       let message = undefined;
@@ -172,7 +173,7 @@ export function initializeUserInterface() {
           <input type="email" id="email" class="swal2-input" placeholder="Correo Electrónico" required>
       
           <label for="fechaRegistro">Fecha de Registro:</label>
-          <input type="date" id="fechaRegistro" class="swal2-input" required>
+          <input type="date" id="fechaRegistro" class="swal2-input" required style="text-align: center;">
       
           <label for="rol">Rol:</label>
           <select id="rol" class="swal2-select">
@@ -197,10 +198,26 @@ export function initializeUserInterface() {
             <input type="text" id="apellido" class="swal2-input" placeholder="Apellido" required>
       
             <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fecha_nacimiento" class="swal2-input" required>
+            <input type="date" id="fecha_nacimiento" class="swal2-input" required style="text-align: center;">
           </form>`;
           console.log('Muestra formulario para añadir autor')
-          break;          
+          break;
+          
+        case "editoriales" :
+          title = "Registro de un nuevo editorial";
+          _action = "insertarEditorial";
+          message = "editorial";
+          formulario = `
+          <form id="usuarioForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" required>
+      
+            <label for="fecha_creacion">Fecha de Creacion:</label>
+            <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;">
+
+          </form>`;
+          console.log('Muestra formulario para añadir autor')
+          break; 
       }
       if (formulario !== undefined && _action !== undefined) {
         formularioAnade(title, formulario, _action, message);

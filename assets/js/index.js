@@ -5,13 +5,13 @@ import {
 } from "./alert-functions.js";
 import { getData } from "./axios-functions.js";
 
-import { route, routeGet } from "./path.js";
+import { routeGet } from "./path.js";
 import {
   initializeUI,
   initializeUserModule,
   initializeUserInterface,
 } from "./ui-module.js";
-import { showUserForm ,showResponse , showAutorForm} from "./formularios.js";
+import { showUserForm ,showResponse , showAutorForm , showEditorialForm} from "./formularios.js";
 /* Navegador */
 initializeUI();
 
@@ -61,8 +61,13 @@ document.querySelector("table").addEventListener("click", async (event) => {
         }
         case "autores" : {
           const { value: formData } = await showAutorForm(response);
-          console.log(formData)
+
           showResponse(formData,response,"autor","autor")
+          break;
+        }
+        case "editoriales" : {
+          const { value: formData } = await showEditorialForm(response);
+          showResponse(formData,response,"editorial","editorial")
           break;
         }
     }

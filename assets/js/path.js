@@ -3,7 +3,7 @@ export const route = `${
 }${window.parent.location.pathname.replace(
   /\/index\.php$/,
   ""
-)}/procesa_datos.inc.php`;  
+)}/procesa_datos.inc.php?token=libros`;
 
 export const routeGet = (clave) => {
   // Obtener la URL actual del navegador
