@@ -23,7 +23,7 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                 <tr>
                     <?php
                     foreach ($dato as $propiedad => $value) {
-                        if ($propiedad == "ESTADO") {
+                        if (strtolower($propiedad) == "estado") {
                             $value = $value ? "Activo" : "Inactivo";
                             ?>
                             <td class="table-state delete">
@@ -32,7 +32,13 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                                 </span>
                             </td>
                             <?php
-                        } else {
+                        }elseif(strtolower($propiedad) == "imagen") {
+                            ?>
+                        <td><img src="<?php echo dirname($_SERVER["PHP_SELF"]) . "/" . $value?>" alt="" width="300px" height="500px"></td>
+
+                            <?php
+                        } 
+                        else {
                             ?>
                             <td>
                                 <?php echo $value ?>

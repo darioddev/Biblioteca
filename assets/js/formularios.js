@@ -3,6 +3,10 @@ import { showErrorMessage, showSuccessMessage } from "./alert-functions.js";
 
 import { route } from "./path.js";
 
+/* */
+
+
+
 // Definición de la función
 export const formularioAnade = async (title = "", html, _action, message) => {
   const { value: formData } = await Swal.fire({
@@ -129,7 +133,6 @@ export const showUserForm = (response) => {
   });
 };
 
-
 export const showAutorForm = (response) => {
   return Swal.fire({
     title: `Datos personales de autor : ${response.NOMBRE} ${response.APELLIDO}`,
@@ -151,15 +154,14 @@ export const showAutorForm = (response) => {
 
   </form>`,
 
-
     focusConfirm: false,
     showCancelButton: true,
     preConfirm: () => {
       return {
-        nombre: document.getElementById("nombre").value ,
-        apellido: document.getElementById("apellido").value ,
-        fecha_nacimiento: document.getElementById("fecha_nacimiento").value ,
-        fecha_creacion : document.getElementById("fecha_creacion").value ,
+        nombre: document.getElementById("nombre").value,
+        apellido: document.getElementById("apellido").value,
+        fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
+        fecha_creacion: document.getElementById("fecha_creacion").value,
       };
     },
   });
@@ -193,7 +195,6 @@ export const showEditorialForm = (response) => {
   });
 };
 
-
 export const showResponse = async (
   formData,
   response,
@@ -202,14 +203,12 @@ export const showResponse = async (
 ) => {
   if (formData) {
     try {
-
       const checkData = Object.fromEntries(
         Object.entries(formData).filter(
           ([key, value]) =>
             value !== response[key.toUpperCase()] && key !== "contrasena"
         )
       );
-
 
       await Promise.all(
         Object.entries(checkData).map(async ([key, value]) => {
@@ -229,11 +228,10 @@ export const showResponse = async (
               "Modificado!",
               `El ${message} ha sido modificado.`
             );
-            
+
             setTimeout(() => {
               location.reload();
             }, 2000);
-
           } catch (error) {
             console.error(`NO SE HA PODIDO ACTUALIZAR: ${error}`);
             showErrorMessage(

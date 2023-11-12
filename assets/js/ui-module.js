@@ -1,6 +1,45 @@
-import { showConfirmationDialog ,showSuccessMessage} from "./alert-functions.js";
+import {
+  showConfirmationDialog,
+  showSuccessMessage,
+} from "./alert-functions.js";
 import { formularioAnade } from "./formularios.js";
 import { routeGet } from "./path.js";
+import { getData } from "./axios-functions.js";
+import { route } from "./path.js";
+
+const selects = async (routedata) => {
+  try {
+    const autores = await getData(`${routedata}`);
+    const options = autores.map((el) => {
+      const option = document.createElement("option");
+      option.text = el.NOMBRE;
+      option.value = el.ID;
+      return option;
+    });
+    return options;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const selectsDatos = async () => {
+  try {
+    const optionsAutor = await selects(`${route}&autor=all`);
+    const optionsHTMLAutor = optionsAutor
+      .map((option) => option.outerHTML)
+      .join("");
+
+    const optionsEditorial = await selects(`${route}&editorial=all`);
+    const optionsHTMLEditorial = optionsEditorial
+      .map((option) => option.outerHTML)
+      .join("");
+    console.log(optionsHTMLEditorial);
+
+    return { optionsHTMLAutor, optionsHTMLEditorial };
+  } catch (error) {
+    console.error("Error al obtener opciones:", error);
+  }
+};
 
 export function initializeUI() {
   try {
@@ -77,14 +116,14 @@ export function initializeUserModule() {
   try {
     // Ocultar opciones según el estado
     const stateElements = document.querySelectorAll(".table-state span");
-  
+
     Array.from(stateElements).forEach((el) => {
       if (el.textContent.toUpperCase().trim() === "ACTIVO") {
         const optionLink = el
           .closest("tr")
           .querySelector(".option-table ul .option-link.check");
         optionLink.style.display = "none";
-        el.style.backgroundColor = "#57c975"
+        el.style.backgroundColor = "#57c975";
       } else {
         const optionLink = el
           .closest("tr")
@@ -125,13 +164,15 @@ export function initializeUserModule() {
   }
 }
 
-export function initializeUserInterface() {
+export const initializeUserInterface = async () => {
   try {
     const anadeUsuario = document.getElementById("anadeUsuario");
     const selectOrdenacion = document.getElementById("ordenarPor");
     const selectBusqueda = document.getElementById("buscarPor");
     const inputFilas = document.getElementById("rows");
     const busquedaForm = document.getElementById("busqueda");
+
+    const { optionsHTMLAutor, optionsHTMLEditorial } = await selectsDatos();
 
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
@@ -141,7 +182,7 @@ export function initializeUserInterface() {
     anadeUsuario.addEventListener("click", (e) => {
       e.preventDefault();
       const action = e.target.dataset.action;
-      console.log(action)
+      console.log(action);
       let title = undefined;
       let formulario = undefined;
       let message = undefined;
@@ -181,9 +222,9 @@ export function initializeUserInterface() {
             <option value="ADMIN">Admin</option>
           </select>
         </form>
-        `
-          console.log('Muestra formulario para añadir autor')
-        break;
+        `;
+          console.log("Muestra formulario para añadir autor");
+          break;
 
         case "autores":
           title = "Registro de nuevo autor";
@@ -200,10 +241,10 @@ export function initializeUserInterface() {
             <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
             <input type="date" id="fecha_nacimiento" class="swal2-input" required style="text-align: center;">
           </form>`;
-          console.log('Muestra formulario para añadir autor')
+          console.log("Muestra formulario para añadir autor");
           break;
-          
-        case "editoriales" :
+
+        case "editoriales":
           title = "Registro de un nuevo editorial";
           _action = "insertarEditorial";
           message = "editorial";
@@ -216,9 +257,33 @@ export function initializeUserInterface() {
             <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;">
 
           </form>`;
-          console.log('Muestra formulario para añadir autor')
-          break; 
+          console.log("Muestra formulario para añadir autor");
+          break;
+
+        case "libros":
+          title = "Registro de un nuevo editorial";
+          _action = "insertarEditorial";
+          message = "editorial";
+          formulario = `
+          <form action="/" method="POST" style="display: flex; flex-direction: column;">
+          <label for="Titulo">Titulo:</label>
+          <input type="text" id="Titulo" class="swal2-input" placeholder="Nombre" required>
+    
+            <label for="ID_Autor">Seleccione el autor :</label>
+            <select id="ID_Autor" class="swal2-select">
+              ${optionsHTMLAutor}
+            </select>
+            <label for="ID_Editorial">Seleccione la editorial :</label>
+            <select id="ID_Editorial" class="swal2-select">
+              ${optionsHTMLEditorial}
+            </select>
+            <label for="Archivo" style="margin-top: 10px;">Seleccione una imagen :</label>
+            <input type="file" id="Archivo" name="archivo" accept=".jpg, .wbep, .png" style="margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+
+          </form>`;
+          break;
       }
+
       if (formulario !== undefined && _action !== undefined) {
         formularioAnade(title, formulario, _action, message);
       }
@@ -248,13 +313,14 @@ export function initializeUserInterface() {
         }
       });
     });
+    console.log("ups.");
 
     selectOrdenacion.addEventListener("change", (e) => {
       actualizarURL(e.target.dataset.name);
     });
 
     inputFilas.addEventListener("input", (e) => {
-      console.log(window.location.href)
+      console.log(window.location.href);
       if (inputFilas.value > maxFilas || inputFilas.value <= 0) {
         inputFilas.value = initializeRow;
       }
@@ -264,7 +330,7 @@ export function initializeUserInterface() {
       actualizarURL();
     });
 
-    const actualizarURL = (data = routeGet('ruta'))  =>{
+    const actualizarURL = (data = routeGet("ruta")) => {
       const ordenSeleccionada = selectOrdenacion.value;
       const filasSeleccionadas = inputFilas.value;
       let newUrl = `?ruta=${data}&row=${filasSeleccionadas}`;
@@ -274,10 +340,10 @@ export function initializeUserInterface() {
       } else {
         newUrl += `&${ordenSeleccionada}`;
       }
-
+      console.log(newUrl);
       window.location.href = newUrl;
-    }
+    };
   } catch (error) {
     console.error(`Error en initializeUserInterface: ${error.message}`);
   }
-}
+};

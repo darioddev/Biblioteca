@@ -76,7 +76,7 @@ if (count($usuarios) < $initalize) {
 
 <section class="home">
     <div class="text">
-        PANEL DE EDITORIALES
+        PANEL DE AUTORES
     </div>
     <?php
     if (isset($usuarios) && !empty($usuarios)) {

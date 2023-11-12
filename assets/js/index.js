@@ -17,6 +17,7 @@ initializeUI();
 
 initializeUserModule();
 
+
 document.querySelector("table").addEventListener("click", async (event) => {
   const action = event.target.dataset.action;
   const typeAction = event.target.dataset.name;

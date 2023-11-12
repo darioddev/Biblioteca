@@ -1,4 +1,6 @@
 <?php
+
+
 define('MAX_FILAS', 20);
 
 /**

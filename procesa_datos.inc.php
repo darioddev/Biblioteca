@@ -7,7 +7,7 @@ header("Content-Type: application/json"); // Establece el encabezado de respuest
 $token = isset($_GET['token']) ? $_GET['token'] : '';
 
 if ($token !== 'libros') {
-    header("Location:". dirname($_SERVER["PHP_SELF"])."/includes/404.inc.php") ;
+    header("Location:" . dirname($_SERVER["PHP_SELF"]) . "/includes/404.inc.php");
     exit();
 }
 
@@ -59,23 +59,23 @@ if (!empty($data)) {
 
         case 'insertarAutor':
             $errores_campos = formularioDatosAutor($data);
-            
+
             $array = [
                 'nombre' => $data["nombre"],
                 'apellido' => $data["apellido"],
                 'fecha_nacimiento' => $data["fecha_nacimiento"]
             ];
 
-            $response = proccesaData($errores_campos,$data,'Autores',$array);
+            $response = proccesaData($errores_campos, $data, 'Autores', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         case 'insertarEditorial':
-            $errores_campos =formularioDatosEditorial($data);
+            $errores_campos = formularioDatosEditorial($data);
             $array = [
                 'nombre' => $data["nombre"],
                 'fecha_creacion' => $data["fecha_creacion"]
             ];
-            $response = proccesaData($errores_campos,$data,'Editoriales',$array);
+            $response = proccesaData($errores_campos, $data, 'Editoriales', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
 
@@ -83,8 +83,13 @@ if (!empty($data)) {
             // Acción no reconocida
             echo json_encode(['error' => 'Acción no válida.']);
             break;
+        case 'insertarLibro' :
+            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        }
+
+
     }
-}
+
 
 if (isset($_GET['user']) && !empty($_GET['user'])) {
     $data = sql_usuario_id($_GET['user']);
@@ -97,35 +102,45 @@ if (isset($_GET['user']) && !empty($_GET['user'])) {
 
     $endpoint = ['nombre', 'apellido', 'apellido2', 'contraseña', 'nombre_usuario', 'correo_electronico', 'fecha_registro', 'rol'];
 
-    $response = array_merge($response, ValuesModify($endpoint, 'Usuarios', 'user',$_GET));
+    $response = array_merge($response, ValuesModify($endpoint, 'Usuarios', 'user', $_GET));
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
 
-// ...
+
 
 if (isset($_GET['autor']) && !empty($_GET['autor'])) {
     $PARAMETROSAUTOR = "ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, FECHA_CREACION, FECHA_MODIFICACION, ESTADO";
-    $autores = sql_get_row($PARAMETROSAUTOR, 'Autores', $_GET['autor']);
-    $response = [$autores];
 
-    $endpoint = ['nombre', 'apellido', 'fecha_nacimiento', 'fecha_creacion'];
+    if ($_GET["autor"] == "all") {
+        $response = sql_get_all($PARAMETROSAUTOR, 'Autores');
 
-    $response = array_merge($response, ValuesModify($endpoint, 'Autores', 'autor',$_GET));
+    } else {
+        $autores = sql_get_row($PARAMETROSAUTOR, 'Autores', $_GET['autor']);
+        $response = [$autores];
+
+        $endpoint = ['nombre', 'apellido', 'fecha_nacimiento', 'fecha_creacion'];
+
+        $response = array_merge($response, ValuesModify($endpoint, 'Autores', 'autor', $_GET));
+    }
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
-
 
 
 if (isset($_GET['editorial']) && !empty($_GET['editorial'])) {
     define('PARAMETROSEDITORIAL', "ID, NOMBRE, FECHA_CREACION, FECHA_MODIFICACION,ESTADO");
-    $editoriales = sql_get_row(PARAMETROSEDITORIAL, 'Editoriales', $_GET['editorial']);
-    $response[] = $editoriales;
 
-    $endpoint = ['nombre', 'fecha_creacion'];
-    $response = array_merge($response, ValuesModify($endpoint, 'Editorial', 'editorial',$_GET));
+    if ($_GET["editorial"] == "all") {
+        $response = sql_get_all(PARAMETROSEDITORIAL, 'Editoriales');
 
+    } else {
+        $editoriales = sql_get_row(PARAMETROSEDITORIAL, 'Editoriales', $_GET['editorial']);
+        $response[] = $editoriales;
+
+        $endpoint = ['nombre', 'fecha_creacion'];
+        $response = array_merge($response, ValuesModify($endpoint, 'Editorial', 'editorial', $_GET));
+    }
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }

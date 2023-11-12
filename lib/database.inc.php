@@ -325,7 +325,7 @@ function sql_get_all_usuarios($offset = 0, $count = null, $columna = null, $orde
     }
 }
 
-function sql_get_row($colums,$tablas , $id)
+function sql_get_row($colums, $tablas, $id)
 {
     try {
         // Llamamos a la función sql_conect y almacenamos la conexión en una variable llamada $mysqli.
@@ -335,7 +335,7 @@ function sql_get_row($colums,$tablas , $id)
         $consulta = $mysqli->stmt_init();
 
         // Preparamos la consulta SQL para obtener los datos del usuario por su ID.
-        $consulta->prepare("SELECT ". $colums . " FROM " .  $tablas . " WHERE ID = ? ");
+        $consulta->prepare("SELECT " . $colums . " FROM " . $tablas . " WHERE ID = ? ");
 
         // Vinculamos el parámetro a la consulta.
         $consulta->bind_param('s', $id);
@@ -363,7 +363,7 @@ function sql_get_row($colums,$tablas , $id)
             $mysqli->close();
         }
     }
-}    
+}
 
 /**
  * Ejecuta una consulta SELECT en la base de datos para recuperar datos de una tabla.
@@ -581,7 +581,7 @@ function sql_update_estado($tabla, int $id): array|mysqli|bool
         $consulta = $mysqli->stmt_init();
 
         // Obtener el estado actual y determinar el nuevo estado (activo o inactivo)
-        $state = sql_get_estado($tabla,$id) ? 0 : 1;
+        $state = sql_get_estado($tabla, $id) ? 0 : 1;
 
         // Preparar la consulta SQL para actualizar el estado del usuario
         $consulta->prepare('UPDATE ' . $tabla . ' SET ESTADO = ? WHERE ID = ?');
@@ -596,12 +596,10 @@ function sql_update_estado($tabla, int $id): array|mysqli|bool
         return $consulta->get_result();
 
     } catch (Exception $e) {
-        // En caso de error, devolver un array vacío
+        echo $e->getMessage();
         return [];
     } finally {
-        // Cerrar la consulta después de usarla
-        if ($consulta)
-            $consulta->close();
+
 
         // Cerrar la conexión a la base de datos después de usarla
         if ($mysqli) {
@@ -659,7 +657,7 @@ function sql_insertar_dato($tabla, $datos)
         $placeholders = implode(', ', array_fill(0, count($datos), '?'));
 
         // Construir la consulta SQL
-        $sql = "INSERT INTO ". $tabla ."(".$columnas.") VALUES (".$placeholders.")";
+        $sql = "INSERT INTO " . $tabla . "(" . $columnas . ") VALUES (" . $placeholders . ")";
 
         // Preparar la consulta
         $consulta->prepare($sql);
@@ -693,3 +691,89 @@ function sql_insertar_dato($tabla, $datos)
         }
     }
 }
+
+/**
+ * Obtiene información de libros de la base de datos.
+ *
+ * @param int|null $offset - Número de registros para omitir (para paginación).
+ * @param int|null $count - Número máximo de registros a devolver (para paginación).
+ * @param string|null $tipo - Tipo de libro a filtrar.
+ * @param string|null $search - Término de búsqueda para filtrar por título.
+ * @return array - Array asociativo con la información de los libros.
+ */
+function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC')
+{
+    try {
+        // Establecer conexión a la base de datos.
+        $mysqli = sql_conect();
+
+        // Inicializar una nueva declaración preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Construir la consulta SQL básica.
+        $query = "SELECT
+            L.ID,
+            L.Imagen,
+            L.Titulo,
+            A.Nombre AS NombreAutor,
+            E.Nombre AS NombreEditorial,
+            L.fecha_creacion,
+            L.Estado
+        FROM
+            Libros L
+        JOIN
+            Autores A ON L.ID_Autor = A.ID
+        JOIN
+            Editoriales E ON L.ID_Editorial = E.ID";
+
+        // Agregar condiciones para WHERE si se proporciona el término de búsqueda.
+        if (!is_null($search) && !is_null($tipo)) {
+            $query .= " WHERE $tipo LIKE ?";
+        }
+
+        // Agregar la cláusula ORDER BY si se proporciona $ordenarPor
+        if (!is_null($columna)) {
+            $query .= " ORDER BY " . $columna . " " . strtoupper($ordenTipo);
+        }
+
+        // Agregar condiciones para LIMIT si se proporcionan offset y count.
+        if (!is_null($offset) && !is_null($count)) {
+            $query .= " LIMIT ?, ?";
+        }
+
+
+        // Preparar la consulta SQL.
+        $consulta->prepare($query);
+
+        if (!is_null($search) && !is_null($offset) && !is_null($count)) {
+            $searchParam = "%" . $search . "%";
+            $consulta->bind_param("sii", $searchParam, $offset, $count);
+        } elseif (!is_null($search)) {
+            $searchParam = "%" . $search . "%";
+            $consulta->bind_param("s", $searchParam);
+        } elseif (!is_null($offset) && !is_null($count)) {
+            $consulta->bind_param("ii", $offset, $count);
+        }
+
+
+        // Ejecutar la consulta.
+        $consulta->execute();
+
+        // Obtener el resultado de la consulta.
+        $resultado = $consulta->get_result();
+
+        // Devolver los resultados como un array asociativo.
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    } catch (Exception $e) {
+        // Manejar excepciones devolviendo un array vacío en caso de error.
+        return [];
+    } finally {
+
+        // Cerrar la conexión a la base de datos si está abierta.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+
+// Ejemplo de uso

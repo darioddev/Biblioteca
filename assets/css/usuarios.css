@@ -199,13 +199,12 @@
   background-color: red;
 }
 
-.option-table {
-  display: flex;
-  justify-content: center;
-}
 
 .option-table ul {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .option-table ul li a i {
