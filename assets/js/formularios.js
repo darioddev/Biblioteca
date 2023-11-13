@@ -1,6 +1,6 @@
 import { postData, getData } from "./axios-functions.js";
 import { showErrorMessage, showSuccessMessage } from "./alert-functions.js";
-
+import { selects } from "./ui-module.js";
 import { route } from "./path.js";
 
 const enviarImagen = async () => {
@@ -36,23 +36,19 @@ const enviarImagen = async () => {
       console.log(response.data);
 
       if (response.data.success) {
-        // Procesar el éxito, si es necesario
         console.log("Éxito:", response.data.success);
-        return response.data.nombreArchivo; // Retornar el valor de file después de la subida exitosa
+        return response.data.nombreArchivo; 
       } else {
-        // Mostrar mensaje de error en caso de error
         console.error("Error:", response.data.error);
       }
     } catch (error) {
-      // Manejar errores de red u otros errores
       console.error(error);
     }
   }
 
-  return null; // Retornar null si no se selecciona ningún archivo
+  return null; 
 };
 
-// Función para enviar el formulario
 const enviarFormulario = async (formData, _action, message) => {
   console.log("entre a enviar");
   try {
@@ -231,6 +227,61 @@ export const showAutorForm = (response) => {
   });
 };
 
+
+export const showLibro = async (response) => {
+  const selectAutor = await selects(`${route}&autor=all`, response.ID_Autor);
+  const selectEditorial = await selects(`${route}&editorial=all`, response.ID_Editorial);
+  
+  const autorSelect = document.createElement("select");
+  autorSelect.id = "ID_Autor";
+  autorSelect.className = "swal2-select";
+
+  const editorialSelect = document.createElement("select");
+  editorialSelect.id = "ID_Editorial";
+  editorialSelect.className = "swal2-select";
+
+  selectAutor.map((el) => {
+    autorSelect.append(el);
+  });
+
+  selectEditorial.map((el) => {
+    editorialSelect.append(el);
+  });
+
+  return Swal.fire({
+    title: `Datos personales del libro : ${response.Titulo} `,
+    html: `<form id="usuarioForm">
+            <label for="Titulo">Titulo:</label>
+            <input type="text" id="Titulo" class="swal2-input" placeholder="Titulo" value="${response.Titulo}"required>
+
+            <label for="ID_Autor">Seleccione el autor :</label>
+            ${autorSelect.outerHTML}
+    
+            <label for="ID_Editorial">Seleccione la editorial :</label>
+            ${editorialSelect.outerHTML}
+
+            <div></div>
+            <label for="fecha_creacion">Fecha de Creacion:</label>
+            <input type="date" id="fecha_creacion" class="swal2-input" value="${response.fecha_creacion}" required style="text-align: center;>
+        
+            <label for="fecha_modificacion">ULTIMA FECHA DE MODIFICACION:</label>
+            <input type="text" id="fecha_modificacion" class="swal2-input" placeholder="Nombre de Usuario" value="${response.Fecha_modificacion}" disabled style="text-align: center;">
+
+          </form>`,
+
+    focusConfirm: false,
+    showCancelButton: true,
+    preConfirm: () => {
+      return {
+        Titulo: document.getElementById("Titulo").value,
+        ID_Autor: document.getElementById("ID_Autor").value,
+        ID_Editorial: document.getElementById("ID_Editorial").value,
+        fecha_creacion: document.getElementById("fecha_creacion").value,
+      };
+    },
+  });
+};
+
 export const showEditorialForm = (response) => {
   return Swal.fire({
     title: `Datos personales de autor : ${response.NOMBRE} `,
@@ -296,7 +347,7 @@ export const showResponse = async (
             setTimeout(() => {
               location.reload();
             }, 2000);
-            
+
           } catch (error) {
             console.error(`NO SE HA PODIDO ACTUALIZAR: ${error}`);
             showErrorMessage(
@@ -315,3 +366,4 @@ export const showResponse = async (
     }
   }
 };
+

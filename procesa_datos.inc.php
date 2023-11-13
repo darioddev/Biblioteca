@@ -78,18 +78,18 @@ if (!empty($data)) {
             $response = proccesaData($errores_campos, $data, 'Editoriales', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
-            /* Este insertar libro solo va a veirifcar el parametro de nombre*/
+        /* Este insertar libro solo va a veirifcar el parametro de nombre*/
         case 'insertarLibro':
-            if(!validaExistenciaVaribale($data['Titulo']) ||  !validaNombreApellidos($data['Titulo'])) {
+            if (!validaExistenciaVaribale($data['Titulo']) || !validaNombreApellidos($data['Titulo'])) {
                 echo json_encode(['error' => 'El titulo esta vacio y/o tiene caracteres especiales', 'errors' => ''], JSON_UNESCAPED_UNICODE);
-            }else{
+            } else {
                 echo json_encode(['data' => $data], JSON_UNESCAPED_UNICODE);
             }
             break;
-            /* Esta accion es la que inserta los datos a la base de datos con la ruta de la imagen
-            Esto es debido a que la logica de la imagen se en encuentra en otro fichero "procesa_imagen.inc.php"*/
+        /* Esta accion es la que inserta los datos a la base de datos con la ruta de la imagen
+        Esto es debido a que la logica de la imagen se en encuentra en otro fichero "procesa_imagen.inc.php"*/
         case 'insertarLibroSucces':
-            $errores_campos=[];
+            $errores_campos = [];
             $array = [
                 'titulo' => $data['Titulo'],
                 'ID_Autor' => $data['ID_Autor'],
@@ -98,6 +98,28 @@ if (!empty($data)) {
             ];
             $response = proccesaData($errores_campos, $data, 'Libros', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            break;
+        case 'verificaEstado':
+            $response['response'] = sql_get_estado('Libros', $data['id'], $data['ForeignKey'], true);
+
+            if(!is_null($response['response'])){
+                $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD']);
+            }
+
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            break;
+        case 'verificaReactivacion':
+            $response['autor'] = sql_get_estado('Autores', $data['id']);
+            $response['editoriales'] = sql_get_estado('Editoriales', $data['ForeignKey']);
+
+            if(!$response['autor'] || $response['autor'] == 0 ) {
+                $response['errorAutor'] = 'El estado de autor es inactivo , para poder activar el libro tendras que activar el autor';
+            }
+            if($response['editoriales'] == 0 || !$response['editoriales'] ) {
+                $response['errorEditorial'] = 'El estado de editorial es inactivo , para poder activar el libro tendras que activar el autor';
+            }
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
             break;
         default:
             // Acción no reconocida
@@ -131,7 +153,7 @@ if (isset($_GET['autor']) && !empty($_GET['autor'])) {
     $PARAMETROSAUTOR = "ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, FECHA_CREACION, FECHA_MODIFICACION, ESTADO";
 
     if ($_GET["autor"] == "all") {
-        $response = sql_get_all($PARAMETROSAUTOR, 'Autores');
+        $response = sql_get_all_activos($PARAMETROSAUTOR, 'Autores');
 
     } else {
         $autores = sql_get_row($PARAMETROSAUTOR, 'Autores', $_GET['autor']);
@@ -150,7 +172,7 @@ if (isset($_GET['editorial']) && !empty($_GET['editorial'])) {
     define('PARAMETROSEDITORIAL', "ID, NOMBRE, FECHA_CREACION, FECHA_MODIFICACION,ESTADO");
 
     if ($_GET["editorial"] == "all") {
-        $response = sql_get_all(PARAMETROSEDITORIAL, 'Editoriales');
+        $response = sql_get_all_activos(PARAMETROSEDITORIAL, 'Editoriales');
 
     } else {
         $editoriales = sql_get_row(PARAMETROSEDITORIAL, 'Editoriales', $_GET['editorial']);
@@ -162,5 +184,19 @@ if (isset($_GET['editorial']) && !empty($_GET['editorial'])) {
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
+
+if (isset($_GET['libro']) && !empty($_GET['libro'])) {
+    define('PARAMETROSEDITORIAL', "TITULO, ID_AUTOR, ID_EDITORIAL , IMAGEN");
+
+    if ($_GET["libro"] == "all") {
+        $response = sql_get_all_libros();
+    } else {
+        $response = sql_get_libro_by_id($_GET["libro"]);
+    }
+
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+}
+
+
 
 ?>

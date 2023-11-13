@@ -124,8 +124,8 @@ if (count($usuarios) < $initalize) {
         $heads = ['ID', 'NOMBRE', 'FECHA_CREACION','FECHA_MODIFICACION', 'ESTADO','ACCIONES'];
         $icons = array(
             array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&editorial=", "fas fa-user-cog", "modificado","editoriales"),
-            array("option-link alt", "?ruta=editoriales&remove=", "fas fa-trash-alt", "borrado"),
-            array("option-link check", "?ruta=editoriales&remove=", "fas fa-user-check", "reactivar")
+            array("option-link alt", "?ruta=editoriales&remove=", "fas fa-trash-alt", "borrado","editorial","ID_Editorial","verificaEstado"),
+            array("option-link check", "?ruta=editoriales&remove=", "fas fa-user-check", "reactivar","")
         );
 
         tableAdd("table", $heads, $usuarios, $icons);

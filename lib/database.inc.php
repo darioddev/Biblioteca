@@ -230,14 +230,19 @@ function sql_valida_login(string $usuario, $contrasena): bool
  *
  * @return mixed Estado del usuario o null si no se encuentra.
  */
-function sql_get_estado(string $tabla, string $id)
+function sql_get_estado(string $tabla, string $id, string $columna = 'ID', $and = null)
 {
     $mysqli = null;
 
     try {
         $mysqli = sql_conect();
 
-        $consulta = $mysqli->prepare('SELECT ESTADO FROM ' . $tabla . ' WHERE ID = ?');
+        $query = 'SELECT ESTADO FROM ' . $tabla . ' WHERE ' . $columna . ' = ? ';
+
+        if (!is_null($and)) {
+            $query .= 'AND ESTADO = 1';
+        }
+        $consulta = $mysqli->prepare($query);
 
         $consulta->bind_param('s', $id);
         $consulta->execute();
@@ -713,6 +718,8 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
         // Construir la consulta SQL básica.
         $query = "SELECT
             L.ID,
+            L.ID_Autor,
+            L.ID_Editorial,
             L.Imagen,
             L.Titulo,
             A.Nombre AS NombreAutor,
@@ -776,7 +783,65 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
     }
 }
 
-function sql_valida_libro($titulo) {
+function sql_get_libro_by_id($id, $libro_id = "L.ID")
+{
+    try {
+        // Establecer conexión a la base de datos.
+        $mysqli = sql_conect();
+
+        // Inicializar una nueva declaración preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Construir la consulta SQL básica.
+        $query = "SELECT
+            L.ID,
+            L.Imagen,
+            L.Titulo,
+            L.ID_Autor,
+            L.ID_Editorial,
+            A.Nombre AS NombreAutor,
+            E.Nombre AS NombreEditorial,
+            L.fecha_creacion,
+            L.Estado,
+            L.Fecha_modificacion
+        FROM
+            Libros L
+        JOIN
+            Autores A ON L.ID_Autor = A.ID
+        JOIN
+            Editoriales E ON L.ID_Editorial = E.ID
+        WHERE
+            " . $libro_id . " = ?";
+
+        // Preparar la consulta SQL.
+        $consulta->prepare($query);
+
+        // Vincular el parámetro ID.
+        $consulta->bind_param("i", $id);
+
+        // Ejecutar la consulta.
+        $consulta->execute();
+
+        // Obtener el resultado de la consulta.
+        $resultado = $consulta->get_result();
+
+        // Devolver el resultado como un array asociativo.
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    } catch (Exception $e) {
+        // Manejar excepciones devolviendo un array vacío en caso de error.
+        return [];
+    } finally {
+        // Cerrar la conexión a la base de datos si está abierta.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+
+
+
+function sql_valida_libro($titulo)
+{
     try {
         $mysqli = sql_conect();
 
@@ -813,4 +878,41 @@ function sql_valida_libro($titulo) {
         $mysqli->close();
     }
 }
+;
+function sql_get_all_activos($columnas, $tabla)
+{
+    try {
+        $mysqli = sql_conect();
+        $consulta = $mysqli->stmt_init();
+        $query = "SELECT " . $columnas . " FROM " . $tabla . " WHERE ESTADO = 1 ";
+
+        $consulta->prepare($query);
+
+        $consulta->execute();
+        $resultado = $consulta->get_result();
+
+        // Verificar si la ejecución fue exitosa
+        if (!$resultado) {
+            throw new Exception("Error en la ejecución de la consulta: " . $consulta->error);
+        }
+
+        // Devolver resultados en un array asociativo
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+
+    } catch (Exception $e) {
+        return [];
+    } finally {
+        // Liberar resultados y cerrar conexión, si están definidos
+        if (isset($resultado)) {
+            mysqli_free_result($resultado);
+        }
+        if (isset($mysqli)) {
+            $mysqli->close();
+        }
+    }
+
+    return [];
+}
+
+?>
 

@@ -7,13 +7,19 @@ import { routeGet } from "./path.js";
 import { getData, postData } from "./axios-functions.js";
 import { route } from "./path.js";
 
-const selects = async (routedata) => {
+export const selects = async (routedata, defaultValue = "") => {
   try {
     const autores = await getData(`${routedata}`);
     const options = autores.map((el) => {
       const option = document.createElement("option");
       option.text = el.NOMBRE;
       option.value = el.ID;
+
+      // Verificar si el valor actual es igual al valor predeterminado
+      if (Number(el.ID) === Number(defaultValue)) {
+        option.defaultSelected = true
+      } 
+
       return option;
     });
     return options;
@@ -21,10 +27,10 @@ const selects = async (routedata) => {
     console.error(error);
   }
 };
-
+/*
 const selectsDatos = async () => {
   try {
-    const optionsAutor = await selects(`${route}&autor=all`);
+    const optionsAutor = await selects(`${route}&autor=all`, 2);
     const optionsHTMLAutor = optionsAutor
       .map((option) => option.outerHTML)
       .join("");
@@ -39,7 +45,7 @@ const selectsDatos = async () => {
   } catch (error) {
     console.error("Error al obtener opciones:", error);
   }
-};
+};*/
 
 export function initializeUI() {
   try {
@@ -172,7 +178,9 @@ export const initializeUserInterface = async () => {
     const inputFilas = document.getElementById("rows");
     const busquedaForm = document.getElementById("busqueda");
 
-    const { optionsHTMLAutor, optionsHTMLEditorial } = await selectsDatos();
+    const optionsAutor = await selects(`${route}&autor=all`);
+    const optionsEditorial = await selects(`${route}&editorial=all`);
+  
 
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
@@ -241,7 +249,6 @@ export const initializeUserInterface = async () => {
             <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
             <input type="date" id="fecha_nacimiento" class="swal2-input" required style="text-align: center;">
           </form>`;
-          console.log("Muestra formulario para añadir autor");
           break;
 
         case "editoriales":
@@ -257,29 +264,39 @@ export const initializeUserInterface = async () => {
             <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;" >
 
           </form>`;
-          console.log("Muestra formulario para añadir autor");
           break;
 
         case "libros":
           title = "Registro de un nuevo libro";
           _action = "insertarLibro";
           message = "libro";
+          const autorSelect = document.createElement("select");
+          autorSelect.id = "ID_Autor";
+          autorSelect.className = "swal2-select";
+
+          optionsAutor.forEach((el) => {
+            autorSelect.append(el);
+          });
+
+          const editorialSelect = document.createElement("select");
+          editorialSelect.id = "ID_Editorial";
+          editorialSelect.className = "swal2-select";
+
+          optionsEditorial.forEach((el) => {
+            editorialSelect.append(el);
+          });
+
           formulario = `
           <form id="usuarioForm">
-          <label for="Titulo">Titulo:</label>
-          <input type="text" id="Titulo" class="swal2-input" placeholder="Nombre" required>
+              <label for="Titulo">Titulo:</label>
+              <input type="text" id="Titulo" class="swal2-input" placeholder="Nombre" required>
       
-          <label for="ID_Autor">Seleccione el autor :</label>
-          <select id="ID_Autor" class="swal2-select">
-              ${optionsHTMLAutor}
-          </select>
-          
-          <label for="ID_Editorial">Seleccione la editorial :</label>
-          <select id="ID_Editorial" class="swal2-select">
-              ${optionsHTMLEditorial}
-          </select>
-           </form>`;
-          console.log("Muestra formulario para añadir autor");
+              <label for="ID_Autor">Seleccione el autor :</label>
+              ${autorSelect.outerHTML}
+      
+              <label for="ID_Editorial">Seleccione la editorial :</label>
+              ${editorialSelect.outerHTML}
+          </form>`;
           break;
       }
 
