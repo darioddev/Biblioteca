@@ -783,7 +783,7 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
     }
 }
 
-function sql_get_libro_by_id($id, $libro_id = "L.ID")
+function sql_get_libro_by_id($id, $libro_id = "L.ID", $state = null)
 {
     try {
         // Establecer conexión a la base de datos.
@@ -813,6 +813,9 @@ function sql_get_libro_by_id($id, $libro_id = "L.ID")
         WHERE
             " . $libro_id . " = ?";
 
+        if (!is_null($state)) {
+            $query .= " AND L.Estado = 1 ";
+        }
         // Preparar la consulta SQL.
         $consulta->prepare($query);
 
@@ -915,4 +918,3 @@ function sql_get_all_activos($columnas, $tabla)
 }
 
 ?>
-

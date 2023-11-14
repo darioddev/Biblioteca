@@ -61,3 +61,27 @@ export const showTime = (title, html = '' ,_timer = 3000) => {
     }
   })
 }
+
+export const  handleConfirmation = async (url, type, search, page, mess , mess2 = 'eliminarlo' , success= 'Eliminado' , succes2 = 'eliminado') => {
+  const isConfirmed = await showConfirmationDialog(
+    "¿Estás seguro?",
+    `¿Deseas ${mess2} a este ${mess}?`,
+    `Si, ${mess2}`
+  );
+
+  if (isConfirmed) {
+    console.log("pinchado");
+    showSuccessMessage(`¡${success}!`, `El ${mess} ha sido ${succes2}.`);
+
+    if (type && search) {
+      url += `&search=${search}&type=${type}`;
+      if (page) {
+        url += `&page=${page}`;
+      }
+    }
+  } else {
+    url = null;
+  }
+
+  return url;
+};

@@ -2,6 +2,7 @@ import {
   showConfirmationDialog,
   showSuccessMessage,
   showErrorMessage,
+  handleConfirmation,
 } from "./alert-functions.js";
 import { getData, postData } from "./axios-functions.js";
 
@@ -27,40 +28,17 @@ document.querySelector("table").addEventListener("click", async (event) => {
   const action = event.target.dataset.action;
   const typeAction = event.target.dataset.name;
 
+  const id_borrado = event.target.dataset.id;
+  const key = event.target.dataset.foreignkey;
+  const state = event.target.dataset.state;
+
   const type = routeGet("type");
   const search = routeGet("search");
   const page = routeGet("page");
   let url = undefined;
 
-  const handleConfirmation = async (url, type, search, page) => {
-    const isConfirmed = await showConfirmationDialog(
-      "¿Estás seguro?",
-      "¿Deseas eliminar a este usuario?",
-      "Si, eliminarlo"
-    );
-
-    if (isConfirmed) {
-      console.log("pinchado");
-      showSuccessMessage("¡Eliminado!", "El usuario ha sido eliminado.");
-
-      if (type && search) {
-        url += `&search=${search}&type=${type}`;
-        if (page) {
-          url += `&page=${page}`;
-        }
-      }
-    } else {
-      url = null;
-    }
-
-    return url;
-  };
-
   const handleBorrado = async () => {
     url = event.target.href;
-    const id_borrado = event.target.dataset.id;
-    const key = event.target.dataset.foreignkey;
-    const state = event.target.dataset.state;
 
     try {
       if (state === "verificaEstado") {
@@ -70,9 +48,10 @@ document.querySelector("table").addEventListener("click", async (event) => {
           action: state,
           keyBD: `L.${key}`,
         });
-    
+        console.log(response);
+
         if (response.libros !== undefined && response.libros.length > 0) {
-          url = null 
+          url = null;
           const librosHtml = response.libros
             .map(
               (el) => `
@@ -85,7 +64,7 @@ document.querySelector("table").addEventListener("click", async (event) => {
             `
             )
             .join(""); // Agregado join("") para convertir el array en una cadena
-        
+
           // Mostrar el mensaje de error solo una vez
           const errorMessage = `
             <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc;">
@@ -94,13 +73,13 @@ document.querySelector("table").addEventListener("click", async (event) => {
               ${librosHtml}
             </div>
           `;
-        
+
           showErrorMessage("", errorMessage);
-        }else {
-          url = await handleConfirmation(url, type, search, page);
+        } else {
+          url = await handleConfirmation(url, type, search, page, typeAction);
         }
       } else {
-        url = await handleConfirmation(url, type, search, page);
+        url = await handleConfirmation(url, type, search, page, typeAction);
       }
     } catch (error) {
       console.log(error);
@@ -112,6 +91,7 @@ document.querySelector("table").addEventListener("click", async (event) => {
     console.log(event.target.href);
     const [response] = await getData(event.target.href);
     console.log(response);
+    console.log(_action)
     switch (_action) {
       case "usuarios": {
         const { value: formData } = await showUserForm(response);
@@ -131,49 +111,91 @@ document.querySelector("table").addEventListener("click", async (event) => {
       }
       case "libros": {
         const { value: formData } = await showLibro(response);
-        console.log(formData);
         break;
       }
+      default:
+        console.log('no definido')
+        break;
     }
   };
 
   const handleReactivar = async () => {
-    //url = event.target.href;
-    try{
-      const reponse = await postData(route,{
-        id : 2,
-        ForeignKey :1,
-        action:'verificaReactivacion'
-      })
-      console.log(reponse)
-    }catch(err){
-      console.log(err)
-    }
-  }
+    url = event.target.href;
 
+    const error = [];
 
+    switch (state) {
+      case "verificaReactivacion":
+        try {
+          const { autor, editoriales, errorAutor, errorEditorial } =
+            await postData(route, {
+              id: id_borrado,
+              ForeignKey: key,
+              action: "verificaReactivacion",
+            });
+          console.log(autor)
+          console.log(editoriales)
+          console.log(errorAutor)
+          console.log(errorEditorial)
 
-    /*
-    const isConfirmed = await showConfirmationDialog(
-      "¿Estás seguro?",
-      "¿Deseas reactivar a este usuario?",
-      "Sí, reactivar usuario"
-    );
+          if (errorAutor !== undefined) error.push(errorAutor);
+          if (errorEditorial !== undefined) error.push(errorEditorial);
 
-    if (isConfirmed) {
-      console.log("Usuario reactivado correctamente.");
-      showSuccessMessage("¡Éxito!", "El usuario ha sido reactivado.");
+          if (error.length !== 0) {
+            throw new Error("Autor y/o editorial estan inactivos");
+          }
 
-      if (type && search) {
-        url += `&search=${search}&type=${type}`;
-        if (page) {
-          url += `&page=${page}`;
+          url = await handleConfirmation(
+            url,
+            type,
+            search,
+            page,
+            typeAction,
+            "reactivar",
+            "Exito",
+            "modificado"
+          );
+
+        } catch (err) {
+          url = undefined;
+          console.error(err);
+
+          const librosHtml = error
+            .map(
+              (el) => `
+      <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc;">
+        <p style="font-weight: bold; margin-bottom: 5px;">${el}</p>
+      </div>
+    `
+            )
+            .join(""); // Agregado join("") para convertir el array en una cadena
+
+          // Mostrar el mensaje de error solo una vez
+          const errorMessage = `
+    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc;">
+      <p style="font-weight: bold; margin-bottom: 5px;">Ha ocurrido un problema.</p>
+      <p>No puedes eliminar un libro si el <strong>autor</strong> y/o <strong>editorial</strong> estan inactivos. </p>
+      ${librosHtml}
+    </div>
+  `;
+          showErrorMessage("", errorMessage);
         }
-      }
-    } else {
-      url = null;
+
+        break;
+      default:
+        url = await handleConfirmation(
+          url,
+          type,
+          search,
+          page,
+          typeAction,
+          "reactivar",
+          "Exito",
+          "modificado"
+        );
+        break;
     }
-  };*/
+  };
 
   switch (action) {
     case "borrado":
@@ -192,8 +214,11 @@ document.querySelector("table").addEventListener("click", async (event) => {
       break;
   }
 
-  if(url !== null && url !== undefined) {
-    window.location.href = url 
+  if (url !== null && url !== undefined) {
+    console.log(url);
+    setTimeout(() => {
+      window.location.href = url;
+    }, 1000);
   }
 });
 

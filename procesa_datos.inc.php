@@ -102,8 +102,8 @@ if (!empty($data)) {
         case 'verificaEstado':
             $response['response'] = sql_get_estado('Libros', $data['id'], $data['ForeignKey'], true);
 
-            if(!is_null($response['response'])){
-                $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD']);
+            if (!is_null($response['response'])) {
+                $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD'] , true);
             }
 
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
@@ -112,12 +112,13 @@ if (!empty($data)) {
             $response['autor'] = sql_get_estado('Autores', $data['id']);
             $response['editoriales'] = sql_get_estado('Editoriales', $data['ForeignKey']);
 
-            if(!$response['autor'] || $response['autor'] == 0 ) {
+            if (!$response['autor'] || $response['autor'] == 0) {
                 $response['errorAutor'] = 'El estado de autor es inactivo , para poder activar el libro tendras que activar el autor';
             }
-            if($response['editoriales'] == 0 || !$response['editoriales'] ) {
+            if ($response['editoriales'] == 0 || !$response['editoriales']) {
                 $response['errorEditorial'] = 'El estado de editorial es inactivo , para poder activar el libro tendras que activar el autor';
             }
+            
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
             break;
