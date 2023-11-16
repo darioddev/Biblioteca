@@ -15,7 +15,7 @@ if (isset($_POST['sendLogin'])) {
             } else {
                 $error_login = 'La contraseña es incorrecta';
             }
-        }else {
+        } else {
             $error_login = 'El usuario y/o contraseña introducida no son validos.';
         }
         //Si uno de los inputs no esta definidio o esta vacio lanzara un error.
@@ -24,7 +24,19 @@ if (isset($_POST['sendLogin'])) {
 
     if (!isset($error_login)) {
         $_SESSION['user'] = $_POST['userLogin'];
+        inializeDataSession($_SESSION['user']);
+
+        if (isset($_SESSION['estado']) && $_SESSION['estado'] == 0) {
+            setcookie('mensajeError', 'Al parecer tu cuenta esta desactivada para volver activarla debe comunicarse con un administrador.', time() + 3600, '/');
+            header('Location:' . $_SERVER['PHP_SELF'] . '?ruta=logout');
+            exit();
+        }
+        if (isset($_COOKIE['mensajeError']))
+            setcookie('mensajeError', '', time() - 3600, '/');
+
+        sleep(2);
         header('Location:' . $_SERVER['PHP_SELF'] . '?ruta=home');
+        exit();
     }
 
 }
@@ -48,13 +60,18 @@ include_once('./includes/header.inc.php');
             <input type="password" name="passwordLogin" id="passwordLogin" title="Introduce tu contraseña"><i
                 class="fa fa-eye fa-eye-open"></i>
             <?php
-        if (isset($error_login)) {
+        if (isset($error_login) || isset($_COOKIE['mensajeError'])) {
             ?>
             <div>
                 <p class="message-error"><i class="fa fa-times" style="font-size:20px;"></i>
-                    <?php echo $error_login ?>
-                </p>
-            </div>
+                    <?php
+                    if (isset($_COOKIE['mensajeError']))
+                        echo $_COOKIE['mensajeError'];
+                    ?>
+                    <?php if (isset($error_login))
+                        echo $error_login ?>
+                    </p>
+                </div>
             <?php
         }
         ?>

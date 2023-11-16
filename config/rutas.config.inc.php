@@ -13,5 +13,6 @@
         'editoriales' => './includes/editoriales.inc.php',
         'reportes' => './includes/reportes.inc.php',
         'logout' => './includes/logout.inc.php',
+        'prestamos' => './includes/prestamos.inc.php',
     ]
 ?>

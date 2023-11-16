@@ -143,44 +143,56 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
             <option value="column=titulo&order=ASC" <?php echo ($SESSION[$nameColumna] == 'titulo' && $SESSION[$nameOrdenacion] == 'ASC') || isset($_GET['search']) ? 'selected' : ''; ?>>Ordenar
                 por...</option>
             <optgroup label="ASCENDENTE">
+            <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
                 <option value="column=ID&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>ID</option>
-                <option value="column=titulo&order=ASC">Titulo</option>
+            <?php }?>
+                <option value="column=titulo&order=ASC">TITULO</option>
                 <option value="column=nombreAutor&order=ASC" <?php echo ($SESSION[$nameColumna] == 'nombreAutor' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>NOMBRE AUTOR</option>
                 <option value="column=nombreEditorial&order=ASC" <?php echo ($SESSION[$nameColumna] == 'nombreEditorial' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>NOMBRE EDITORIAL</option>
+                <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
                 <option value="column=fecha_creacion&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'fecha_creacion' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>FECHA CREACION</option>
+                <?php }?>
             </optgroup>
             <optgroup label="DESCENDENTE">
+            <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
                 <option value="column=ID&order=DESC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ID</option>
+            <?php }?>
                 <option value="column=titulo&order=DESC" <?php echo ($SESSION[$nameColumna] == 'titulo' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>TITULO</option>
                 <option value="column=nombreAutor&order=DESC" <?php echo ($SESSION[$nameColumna] == 'nombreAutor' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE AUTOR</option>
-                <option value="column=nombreEditorial&order=DESC" <?php echo ($_SESSION[$nameColumna] == 'nombreEditorial' && $_SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>FECHA EDITORIAL</option>
+                <option value="column=nombreEditorial&order=DESC" <?php echo ($_SESSION[$nameColumna] == 'nombreEditorial' && $_SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE EDITORIAL</option>
+                <?php if(isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
                 <option value="column=fecha_creacion&order=DESC" <?php echo ($SESSION[$nameColumna] == 'fecha_creacion' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>FECHA CREACION</option>
-            <optgroup label="ESTADO">
-                <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
-                <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
-            </optgroup>
+                <optgroup label="ESTADO">
+                    <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
+                    <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
+                </optgroup>
+            <?php } ?>
             </select>
             </div>
             <?php
             break;
-                    case "LibrosBuscador" :
-            ?>
-             <optgroup label="Por defecto : titulo"></optgroup>
+                    case "LibrosBuscador":
+                        ?>
+            <optgroup label="Por defecto : titulo"></optgroup>
             <option value="L.TITULO">Buscar por... </option>
-            <option value="L.ID">ID</option>
+            <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
+                <option value="L.ID">ID</option>
+            <?php } ?>
             <option value="A.Nombre">NOMBRE AUTOR</option>
             <option value="E.Nombre">NOMBRE EDITORIAL</option>
-            <optgroup label="Para buscar por fechas solo se admite"></optgroup>
-            <optgroup label="numeros ej : junio: 06 "></optgroup>
-            <option value="L.fecha_creacion">FECHA CREACION</option>
-            <optgroup label="Para ver inactivos ponga : false"></optgroup>
-            <optgroup label="Para ver activos ponga : 1"></optgroup>
-            <option value="L.Estado">ESTADO</option>
+            <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") { ?>
+                <optgroup label="Para buscar por fechas solo se admite"></optgroup>
+                <optgroup label="numeros ej : junio: 06 "></optgroup>
+                <option value="L.fecha_creacion">FECHA CREACION</option>
+                <optgroup label="Para ver inactivos ponga : false"></optgroup>
+                <optgroup label="Para ver activos ponga : 1"></optgroup>
+                <option value="L.Estado">ESTADO</option>
+            <?php } ?>
             </select>
             </div>
             </div>
             <?php
-            
+
             break;
                 }
 

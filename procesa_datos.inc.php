@@ -187,12 +187,12 @@ if (isset($_GET['editorial']) && !empty($_GET['editorial'])) {
 }
 
 if (isset($_GET['libro']) && !empty($_GET['libro'])) {
-    define('PARAMETROSEDITORIAL', "TITULO, ID_AUTOR, ID_EDITORIAL , IMAGEN");
-
     if ($_GET["libro"] == "all") {
         $response = sql_get_all_libros();
     } else {
         $response = sql_get_libro_by_id($_GET["libro"]);
+        $endpoint = ["Titulo", "ID_Autor", "ID_Editorial" , "fecha_creacion" , "Imagen"];
+        $response = array_merge($response, ValuesModify($endpoint, 'Libros', 'libro', $_GET));
     }
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);

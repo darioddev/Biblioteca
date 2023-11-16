@@ -18,6 +18,7 @@ import {
   showAutorForm,
   showEditorialForm,
   showLibro,
+  enviarImagen,
 } from "./formularios.js";
 /* Navegador */
 initializeUI();
@@ -38,6 +39,7 @@ document.querySelector("table").addEventListener("click", async (event) => {
   let url = undefined;
 
   const handleBorrado = async () => {
+    console.log(id_borrado);
     url = event.target.href;
 
     try {
@@ -91,7 +93,7 @@ document.querySelector("table").addEventListener("click", async (event) => {
     console.log(event.target.href);
     const [response] = await getData(event.target.href);
     console.log(response);
-    console.log(_action)
+    console.log(_action);
     switch (_action) {
       case "usuarios": {
         const { value: formData } = await showUserForm(response);
@@ -111,10 +113,11 @@ document.querySelector("table").addEventListener("click", async (event) => {
       }
       case "libros": {
         const { value: formData } = await showLibro(response);
+        showResponse(formData, response, "libro", "libro");
         break;
       }
       default:
-        console.log('no definido')
+        console.log("no definido");
         break;
     }
   };
@@ -127,16 +130,11 @@ document.querySelector("table").addEventListener("click", async (event) => {
     switch (state) {
       case "verificaReactivacion":
         try {
-          const { autor, editoriales, errorAutor, errorEditorial } =
-            await postData(route, {
-              id: id_borrado,
-              ForeignKey: key,
-              action: "verificaReactivacion",
-            });
-          console.log(autor)
-          console.log(editoriales)
-          console.log(errorAutor)
-          console.log(errorEditorial)
+          const { errorAutor, errorEditorial } = await postData(route, {
+            id: id_borrado,
+            ForeignKey: key,
+            action: "verificaReactivacion",
+          });
 
           if (errorAutor !== undefined) error.push(errorAutor);
           if (errorEditorial !== undefined) error.push(errorEditorial);
@@ -155,7 +153,6 @@ document.querySelector("table").addEventListener("click", async (event) => {
             "Exito",
             "modificado"
           );
-
         } catch (err) {
           url = undefined;
           console.error(err);
@@ -197,6 +194,15 @@ document.querySelector("table").addEventListener("click", async (event) => {
     }
   };
 
+  const handleCambiarImagen = async () => {
+    const reponse = await enviarImagen();
+    if (reponse !== undefined && reponse !== null) {
+      await getData(`${route}&libro=${id_borrado}&Imagen=${reponse}`)
+      setTimeout(() => location.reload(), 1000);
+    }
+
+  };
+
   switch (action) {
     case "borrado":
       await handleBorrado();
@@ -208,6 +214,9 @@ document.querySelector("table").addEventListener("click", async (event) => {
 
     case "reactivar":
       await handleReactivar();
+      break;
+    case "cambiarImagen":
+      await handleCambiarImagen();
       break;
 
     default:

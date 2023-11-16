@@ -3,7 +3,7 @@ import { showErrorMessage, showSuccessMessage } from "./alert-functions.js";
 import { selects } from "./ui-module.js";
 import { route } from "./path.js";
 
-const enviarImagen = async () => {
+export const enviarImagen = async () => {
   const { value: file } = await Swal.fire({
     title: "Selecciona una imagen",
     input: "file",

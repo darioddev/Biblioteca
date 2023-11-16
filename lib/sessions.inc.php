@@ -47,4 +47,10 @@ function initializeRow($nameRow)
     }
 }
 
+function inializeDataSession($id) {
+    foreach(sql_obtener_usuario($id) as $propiedad=>$value) {
+        $_SESSION[strtolower($propiedad)] = $value;
+    }
+}
+
 ?>

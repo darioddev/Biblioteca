@@ -76,6 +76,7 @@ function sql_obtener_usuario(string $usuario)
     }
 }
 
+
 /**
  * Obtiene los datos de un usuario a partir de su ID.
  *
@@ -560,7 +561,7 @@ function sql_query_update($tabla, $column, $valor, $id)
         return true;
 
     } catch (Exception $e) {
-        return $e->getMessage();
+        echo $e->getMessage();
     } finally {
         if ($mysqli) {
             $mysqli->close();

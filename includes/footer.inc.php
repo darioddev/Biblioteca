@@ -3,7 +3,7 @@
         <p>Desarrollado por: Dario Alexander Quinde</p>
         <div class="github-icon">
             <a target="_blank" href="https://github.com/darioddev/Biblioteca">
-                <i class="fa fa-github" style="font-size:30px;color:purple;"></i>
+                <i class="fas fa-github" style="font-size:30px;color:purple;"></i>
             </a>
         </div>
     </div>

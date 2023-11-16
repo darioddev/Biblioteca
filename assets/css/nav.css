@@ -22,7 +22,7 @@
 
 body {
     min-height: 100vh;
-    background-color: #FFFFFF;
+    background: #FFFFFF !important;
     transition: var(--trans-05);
     background-color: var(--body-color);
 }

@@ -33,9 +33,9 @@ if (isset($_GET["page"])) {
 }
 
 if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
-    $usuarios = sql_get_all_libros(null, null, $_GET['type'], $_GET['search'] , null , null);
+    $usuarios = sql_get_all_libros(null, null, $_GET['type'], $_GET['search'], null, null);
     $pages = pages($_GET, $initalize, (int) count($usuarios));
-    $usuarios = sql_get_all_libros($pages[0], $initalize, $_GET['type'], trim($_GET['search']) , null , null);
+    $usuarios = sql_get_all_libros($pages[0], $initalize, $_GET['type'], trim($_GET['search']), null, null);
 
     $route = "?ruta=libros&row=" . $_SESSION['rowLibros'] . "&search=" . trim($_GET['search']) . "&type=" . $_GET['type'] . "";
 
@@ -73,7 +73,7 @@ if (count($usuarios) < $initalize) {
     <div class="text">
         PANEL DE LIBROS
         <?php
-        
+
         ?>
     </div>
     <?php
@@ -106,7 +106,10 @@ if (count($usuarios) < $initalize) {
             paginaLinks('pagination', $pages[1], $route);
             ?>
             <?php
-            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'libros')
+            if(isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") {
+                iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'libros');
+
+            }
                 ?>
         </div>
         <?php
@@ -123,9 +126,15 @@ if (count($usuarios) < $initalize) {
         $heads = ['ID', 'IMAGEN', 'TITULO', 'NOMBRE AUTOR', 'NOMBRE EDITORIAL', 'FECHA CREACION', 'ESTADO', 'ACCIONES'];
         $icons = array(
             array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&libro=", "fas fa-user-cog", "modificado", "libros"),
-            array("option-link alt", "?ruta=libros&remove=", "fas fa-trash-alt", "borrado","libro","",""),
-            array("option-link check", "?ruta=libros&remove=", "fas fa-user-check", "reactivar","","verificaReactivacion"),
+            array("option-link alt", "?ruta=libros&remove=", "fas fa-trash-alt", "borrado", "libro", "", ""),
+            array("option-link check", "?ruta=libros&remove=", "fas fa-user-check", "reactivar", "", "verificaReactivacion"),
+            array("option-link cog", "", "fas fa-cloud-upload-alt" , "cambiarImagen"),
+            array("option-link cog", "", "fas fa-cloud-upload-alt" , "reservarLibro"),
         );
+
+        if(isset($_SESSION['rol']) && $_SESSION['rol'] == "LECTOR") {
+            $heads = ['IMAGEN', 'TITULO', 'NOMBRE AUTOR', 'NOMBRE EDITORIAL', 'RESERVAR'];
+        }
 
         tableAdd("table", $heads, $usuarios, $icons);
 

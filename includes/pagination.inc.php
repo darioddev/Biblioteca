@@ -22,7 +22,7 @@ function pages($paramentGet, $initalize, $tabla)
     $usuariosPorPagina = (int) $initalize;
 
     if ($usuariosPorPagina <= 0) {
-        $usuariosPorPagina = 1; // O el valor por defecto que desees
+        $usuariosPorPagina = 1; // 1 el valor por defecto que desees
     }
 
     $offset = (int) ($paginaActual - 1) * (int) $usuariosPorPagina;

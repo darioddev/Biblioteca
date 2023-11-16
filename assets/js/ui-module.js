@@ -17,8 +17,8 @@ export const selects = async (routedata, defaultValue = "") => {
 
       // Verificar si el valor actual es igual al valor predeterminado
       if (Number(el.ID) === Number(defaultValue)) {
-        option.defaultSelected = true
-      } 
+        option.defaultSelected = true;
+      }
 
       return option;
     });
@@ -173,6 +173,7 @@ export function initializeUserModule() {
 export const initializeUserInterface = async () => {
   try {
     const anadeUsuario = document.getElementById("anadeUsuario");
+
     const selectOrdenacion = document.getElementById("ordenarPor");
     const selectBusqueda = document.getElementById("buscarPor");
     const inputFilas = document.getElementById("rows");
@@ -180,28 +181,29 @@ export const initializeUserInterface = async () => {
 
     const optionsAutor = await selects(`${route}&autor=all`);
     const optionsEditorial = await selects(`${route}&editorial=all`);
-  
 
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
     const initializeRow = window.initializeRow;
     const maxFilas = window.maxFilas;
 
-    anadeUsuario.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const action = e.target.dataset.action;
-      console.log(action);
-      let title = undefined;
-      let formulario = undefined;
-      let message = undefined;
-      let _action = undefined;
+    if (anadeUsuario) {
+      anadeUsuario.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const action = e.target.dataset.action;
+        console.log(action);
 
-      switch (action) {
-        case "usuarios":
-          title = "Registro de nuevo ";
-          _action = "insertarUsuario";
-          message = "Usuario";
-          formulario = `
+        let title = undefined;
+        let formulario = undefined;
+        let message = undefined;
+        let _action = undefined;
+
+        switch (action) {
+          case "usuarios":
+            title = "Registro de nuevo ";
+            _action = "insertarUsuario";
+            message = "Usuario";
+            formulario = `
         <form id="usuarioForm">
           <label for="name">Nombre</label>
           <input type="text" id="name" class="swal2-input" placeholder="Nombre" required>
@@ -231,14 +233,14 @@ export const initializeUserInterface = async () => {
           </select>
         </form>
         `;
-          console.log("Muestra formulario para añadir autor");
-          break;
+            console.log("Muestra formulario para añadir autor");
+            break;
 
-        case "autores":
-          title = "Registro de nuevo autor";
-          _action = "insertarAutor";
-          message = "Autor";
-          formulario = `
+          case "autores":
+            title = "Registro de nuevo autor";
+            _action = "insertarAutor";
+            message = "Autor";
+            formulario = `
           <form id="usuarioForm">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" required>
@@ -249,13 +251,13 @@ export const initializeUserInterface = async () => {
             <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
             <input type="date" id="fecha_nacimiento" class="swal2-input" required style="text-align: center;">
           </form>`;
-          break;
+            break;
 
-        case "editoriales":
-          title = "Registro de un nuevo editorial";
-          _action = "insertarEditorial";
-          message = "editorial";
-          formulario = `
+          case "editoriales":
+            title = "Registro de un nuevo editorial";
+            _action = "insertarEditorial";
+            message = "editorial";
+            formulario = `
           <form id="usuarioForm">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" required>
@@ -264,29 +266,29 @@ export const initializeUserInterface = async () => {
             <input type="date" id="fecha_creacion" class="swal2-input" required  style="text-align: center;" >
 
           </form>`;
-          break;
+            break;
 
-        case "libros":
-          title = "Registro de un nuevo libro";
-          _action = "insertarLibro";
-          message = "libro";
-          const autorSelect = document.createElement("select");
-          autorSelect.id = "ID_Autor";
-          autorSelect.className = "swal2-select";
+          case "libros":
+            title = "Registro de un nuevo libro";
+            _action = "insertarLibro";
+            message = "libro";
+            const autorSelect = document.createElement("select");
+            autorSelect.id = "ID_Autor";
+            autorSelect.className = "swal2-select";
 
-          optionsAutor.forEach((el) => {
-            autorSelect.append(el);
-          });
+            optionsAutor.forEach((el) => {
+              autorSelect.append(el);
+            });
 
-          const editorialSelect = document.createElement("select");
-          editorialSelect.id = "ID_Editorial";
-          editorialSelect.className = "swal2-select";
+            const editorialSelect = document.createElement("select");
+            editorialSelect.id = "ID_Editorial";
+            editorialSelect.className = "swal2-select";
 
-          optionsEditorial.forEach((el) => {
-            editorialSelect.append(el);
-          });
+            optionsEditorial.forEach((el) => {
+              editorialSelect.append(el);
+            });
 
-          formulario = `
+            formulario = `
           <form id="usuarioForm">
               <label for="Titulo">Titulo:</label>
               <input type="text" id="Titulo" class="swal2-input" placeholder="Nombre" required>
@@ -297,13 +299,14 @@ export const initializeUserInterface = async () => {
               <label for="ID_Editorial">Seleccione la editorial :</label>
               ${editorialSelect.outerHTML}
           </form>`;
-          break;
-      }
+            break;
+        }
 
-      if (formulario !== undefined && _action !== undefined) {
-        formularioAnade(title, formulario, _action, message);
-      }
-    });
+        if (formulario !== undefined && _action !== undefined) {
+          formularioAnade(title, formulario, _action, message);
+        }
+      });
+    }
 
     busquedaForm.addEventListener("submit", (e) => {
       e.preventDefault();

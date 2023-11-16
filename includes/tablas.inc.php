@@ -23,9 +23,19 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                 <tr>
                     <?php
                     foreach ($dato as $propiedad => $value) {
-                        if(strtolower($propiedad) == "id_autor" || strtolower($propiedad) == "id_editorial") {
+                        $noMuestra = ['id_autor', 'id_editorial'];
+
+                        if (isset($_SESSION['rol']) && $_SESSION['rol'] == "LECTOR") {
+                            $noMuestra[] = 'estado';
+                            $noMuestra[] = 'id';
+                            $noMuestra[] = 'fecha_creacion';
+                        }
+
+                        if (in_array(strtolower($propiedad), $noMuestra)) {
                             continue;
                         }
+
+
                         if (strtolower($propiedad) == "estado") {
                             $value = $value ? "Activo" : "Inactivo";
                             ?>
@@ -53,9 +63,18 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                     <td class="option-table">
                         <ul>
                             <?php
-                            iconAddLi($dataIcon[0][0], $dataIcon[0][1] . $dato['ID'], $dataIcon[0][2], $dataIcon[0][3], $dataIcon[0][4]);
-                            iconAddLi($dataIcon[1][0], $dataIcon[1][1] . $dato['ID'], $dataIcon[1][2], $dataIcon[1][3], $dataIcon[1][4] ,$dato['ID'], $dataIcon[1][5], $dataIcon[1][6]);
-                            iconAddLi($dataIcon[2][0], $dataIcon[2][1] . $dato['ID'], $dataIcon[2][2], $dataIcon[2][3], $dataIcon[2][4] ,isset($dato['ID_Autor']) ? $dato['ID_Autor'] : '' , isset($dato['ID_Editorial']) ? $dato['ID_Editorial'] : 0 , isset($dataIcon[2][5]) ? $dataIcon[2][5] : 0) ;
+                            if (isset($_SESSION['rol']) && $_SESSION['rol'] == "ADMIN") {
+
+                                if (isset($dataIcon[3][0])) {
+                                    iconAddLi($dataIcon[3][0], $dataIcon[3][1] . $dato['ID'], $dataIcon[3][2], $dataIcon[3][3], "", $dato['ID'], "");
+                                }
+
+                                iconAddLi($dataIcon[0][0], $dataIcon[0][1] . $dato['ID'], $dataIcon[0][2], $dataIcon[0][3], $dataIcon[0][4]);
+                                iconAddLi($dataIcon[1][0], $dataIcon[1][1] . $dato['ID'], $dataIcon[1][2], $dataIcon[1][3], $dataIcon[1][4], $dato['ID'], $dataIcon[1][5], $dataIcon[1][6]);
+                                iconAddLi($dataIcon[2][0], $dataIcon[2][1] . $dato['ID'], $dataIcon[2][2], $dataIcon[2][3], $dataIcon[2][4], isset($dato['ID_Autor']) ? $dato['ID_Autor'] : '', isset($dato['ID_Editorial']) ? $dato['ID_Editorial'] : 0, isset($dataIcon[2][5]) ? $dataIcon[2][5] : 0);
+                            }else {
+                                iconAddLi($dataIcon[4][0], $dataIcon[4][1] . $dato['ID'], $dataIcon[4][2], $dataIcon[4][3], "", $dato['ID'], "");
+                            }
                             ?>
                         </ul>
                     </td>
