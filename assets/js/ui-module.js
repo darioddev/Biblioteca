@@ -122,21 +122,28 @@ export function initializeUserModule() {
   try {
     // Ocultar opciones según el estado
     const stateElements = document.querySelectorAll(".table-state span");
+    console.log(stateElements)
 
     Array.from(stateElements).forEach((el) => {
       if (el.textContent.toUpperCase().trim() === "ACTIVO") {
         const optionLink = el
           .closest("tr")
           .querySelector(".option-table ul .option-link.check");
-        optionLink.style.display = "none";
-        el.style.backgroundColor = "#57c975";
+        if (optionLink) {
+          optionLink.style.display = "none";
+        }
+          el.style.backgroundColor = "#57c975";
+        
       } else {
         const optionLink = el
           .closest("tr")
           .querySelector(".option-table ul .option-link.alt");
-        optionLink.style.display = "none";
-        el.style.backgroundColor = "red";
-        el.style.color = "white";
+        if (optionLink) {
+          optionLink.style.display = "none";
+        }
+          el.style.backgroundColor = "red";
+          el.style.color = "white";
+        
       }
     });
 

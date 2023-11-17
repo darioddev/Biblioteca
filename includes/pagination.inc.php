@@ -18,14 +18,14 @@ function paginaLinks($classname, $totalPaginas, $route)
 
 function pages($paramentGet, $initalize, $tabla)
 {
-    $paginaActual = isset($paramentGet['page']) ? $paramentGet['page'] : 1;
-    $usuariosPorPagina = (int) $initalize;
+    $paginaActual = (int) (isset($paramentGet['page']) ? $paramentGet['page'] : 1);
+    $usuariosPorPagina = $initalize;
 
     if ($usuariosPorPagina <= 0) {
         $usuariosPorPagina = 1; // 1 el valor por defecto que desees
     }
 
-    $offset = (int) ($paginaActual - 1) * (int) $usuariosPorPagina;
+    $offset = ($paginaActual - 1) * $usuariosPorPagina;
 
     // Obtener el número total de usuarios para la paginación
 

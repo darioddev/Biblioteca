@@ -25,6 +25,10 @@ initializeUI();
 
 initializeUserModule();
 
+initializeUserInterface();
+
+
+try{
 document.querySelector("table").addEventListener("click", async (event) => {
   const action = event.target.dataset.action;
   const typeAction = event.target.dataset.name;
@@ -230,5 +234,6 @@ document.querySelector("table").addEventListener("click", async (event) => {
     }, 1000);
   }
 });
-
-initializeUserInterface();
+}catch(error){
+  console.log(error)
+}

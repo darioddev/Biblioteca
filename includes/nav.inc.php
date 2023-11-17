@@ -75,7 +75,7 @@
         </div>
         <div class="bottom-content">
         <li class="class">
-                <a href="?ruta=configuracion" id="session">
+                <a href="?ruta=configuracion" id="">
                     <i class="bx bx-cog icon"></i>
                     <span class="text nav-text">Configuracion</span>
                 </a>

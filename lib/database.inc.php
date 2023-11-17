@@ -636,16 +636,22 @@ function sql_count_tabla($tabla)
 
         $fila = $resultado->fetch_assoc();
 
-        return $fila['total'];
+        return (int) $fila['total'];
 
     } catch (Exception $e) {
         return 0;
     } finally {
-        if ($consulta)
-            $consulta->close();
+        if ($resultado) {
+            mysqli_free_result($resultado);
+        }
 
-        if ($mysqli)
+        if ($consulta) {
+            $consulta->close();
+        }
+
+        if ($mysqli) {
             $mysqli->close();
+        }
     }
 }
 
@@ -916,6 +922,90 @@ function sql_get_all_activos($columnas, $tabla)
     }
 
     return [];
+}
+
+
+/**
+ * Obtiene información de libros de la base de datos.
+ *
+ * @param int|null $offset - Número de registros para omitir (para paginación).
+ * @param int|null $count - Número máximo de registros a devolver (para paginación).
+ * @param string|null $tipo - Tipo de libro a filtrar.
+ * @param string|null $search - Término de búsqueda para filtrar por título.
+ * @return array - Array asociativo con la información de los libros.
+ */
+function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC')
+{
+    try {
+        // Establecer conexión a la base de datos.
+        $mysqli = sql_conect();
+
+        // Inicializar una nueva declaración preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Construir la consulta SQL básica.
+        $query = "SELECT
+        Prestamos.ID,
+        Usuarios.nombre AS NombreUsuario,
+        Usuarios.Correo_Electronico AS CorreoElectronico,
+        Libros.titulo AS NombreLibro,
+        Prestamos.Fecha_inicio,
+        Prestamos.Fecha_devolucion,
+        Prestamos.dias_restantes,
+        Prestamos.estado
+    FROM Prestamos
+    JOIN Usuarios ON Prestamos.ID_Usuario = Usuarios.ID
+    JOIN Libros ON Prestamos.ID_Libro = Libros.ID
+    ";
+
+        // Agregar condiciones para WHERE si se proporciona el término de búsqueda.
+        if (!is_null($search) && !is_null($tipo)) {
+            $query .= " WHERE $tipo LIKE ?";
+        }
+
+        // Agregar la cláusula ORDER BY si se proporciona $ordenarPor
+        if (!is_null($columna)) {
+            $query .= " ORDER BY " . $columna . " " . strtoupper($ordenTipo);
+        }
+
+        // Agregar condiciones para LIMIT si se proporcionan offset y count.
+        if (!is_null($offset) && !is_null($count)) {
+            $query .= " LIMIT ?, ?";
+        }
+
+
+        // Preparar la consulta SQL.
+        $consulta->prepare($query);
+
+        if (!is_null($search) && !is_null($offset) && !is_null($count)) {
+            $searchParam = "%" . $search . "%";
+            $consulta->bind_param("sii", $searchParam, $offset, $count);
+        } elseif (!is_null($search)) {
+            $searchParam = "%" . $search . "%";
+            $consulta->bind_param("s", $searchParam);
+        } elseif (!is_null($offset) && !is_null($count)) {
+            $consulta->bind_param("ii", $offset, $count);
+        }
+
+
+        // Ejecutar la consulta.
+        $consulta->execute();
+
+        // Obtener el resultado de la consulta.
+        $resultado = $consulta->get_result();
+
+        // Devolver los resultados como un array asociativo.
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    } catch (Exception $e) {
+        // Manejar excepciones devolviendo un array vacío en caso de error.
+        return [];
+    } finally {
+
+        // Cerrar la conexión a la base de datos si está abierta.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
 }
 
 ?>
