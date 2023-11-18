@@ -223,11 +223,12 @@ function sql_valida_login(string $usuario, $contrasena): bool
 }
 
 /**
- * 
- *//**
  * Obtiene el estado de un usuario a partir de su nombre de usuario.
  *
- * @param string $usuario Nombre de usuario.
+ * @param string $tabla Nombre de la tabla en la base de datos.
+ * @param string $id Valor del identificador (ID) del usuario.
+ * @param string $columna Nombre de la columna que contiene el ID en la tabla.
+ * @param mixed $and Valor opcional para añadir una condición adicional en la consulta SQL.
  *
  * @return mixed Estado del usuario o null si no se encuentra.
  */
@@ -236,17 +237,25 @@ function sql_get_estado(string $tabla, string $id, string $columna = 'ID', $and 
     $mysqli = null;
 
     try {
+        // Conectarse a la base de datos
         $mysqli = sql_conect();
 
+        // Construir la consulta SQL base
         $query = 'SELECT ESTADO FROM ' . $tabla . ' WHERE ' . $columna . ' = ? ';
 
+        // Agregar condición adicional si se proporciona
         if (!is_null($and)) {
             $query .= 'AND ESTADO = 1';
         }
+
+        // Preparar la consulta
         $consulta = $mysqli->prepare($query);
 
+        // Vincular el parámetro y ejecutar la consulta
         $consulta->bind_param('s', $id);
         $consulta->execute();
+
+        // Obtener el resultado de la consulta
         $resultado = $consulta->get_result();
 
         // Obtener el valor del estado si existe
@@ -259,7 +268,7 @@ function sql_get_estado(string $tabla, string $id, string $columna = 'ID', $and 
         return $estado;
 
     } catch (Exception $e) {
-        // Manejar la excepción según tus necesidades
+        // Retornar falso en caso de error
         return false;
     } finally {
         // Cerrar la conexión si aún está abierta
@@ -269,68 +278,87 @@ function sql_get_estado(string $tabla, string $id, string $columna = 'ID', $and 
     }
 }
 
+/**
+ * Obtiene todos los usuarios de la base de datos con opciones de filtrado y paginación.
+ *
+ * @param int|null $offset Desplazamiento para la paginación (valor predeterminado: 0).
+ * @param int|null $count Cantidad de usuarios a recuperar (valor predeterminado: null, lo que significa todos los usuarios).
+ * @param string|null $columna Nombre de la columna para ordenar los resultados (valor predeterminado: null, sin ordenar).
+ * @param string $ordenTipo Tipo de orden (ASC o DESC) para ordenar los resultados (valor predeterminado: 'ASC').
+ *
+ * @return array Arreglo asociativo con la información de los usuarios o un arreglo vacío si no hay resultados.
+ */
 function sql_get_all_usuarios($offset = 0, $count = null, $columna = null, $ordenTipo = 'ASC')
 {
-    // Initialize $resultado outside the try block.
+    // Inicializar $resultado fuera del bloque try.
     $resultado = null;
 
     try {
-        // Call the sql_connect function and store the connection in a variable called $mysqli.
+        // Llamar a la función sql_conect y almacenar la conexión en una variable llamada $mysqli.
         $mysqli = sql_conect();
 
-        // Initialize a prepared statement.
+        // Inicializar una declaración preparada.
         $consulta = $mysqli->stmt_init();
 
+        // Construir la consulta SQL base.
         $query = "SELECT ID, NOMBRE, NOMBRE_USUARIO, CORREO_ELECTRONICO, FECHA_REGISTRO, ROL, ESTADO FROM Usuarios";
 
-
-
-        // Agregar la cláusula ORDER BY si se proporciona $ordenarPor
+        // Agregar la cláusula ORDER BY si se proporciona $columna.
         if ($columna !== null) {
             $query .= " ORDER BY " . $columna . " " . strtoupper($ordenTipo);
         }
 
-        // Agregar la cláusula LIMIT si se proporciona $count
+        // Agregar la cláusula LIMIT si se proporciona $count.
         if ($count !== null) {
             $query .= " LIMIT ?, ?";
         }
 
+        // Preparar la consulta.
         $consulta = $mysqli->prepare($query);
 
-        // Bind parameters if $count is provided
+        // Vincular parámetros si se proporciona $count.
         if ($count !== null) {
             $consulta->bind_param('ii', $offset, $count);
         }
 
-        // Execute the prepared statement.
+        // Ejecutar la declaración preparada.
         $consulta->execute();
 
-        // Get the result set.
+        // Obtener el conjunto de resultados.
         $resultado = $consulta->get_result();
 
-        // Check if the query was successful and return the result.
+        // Verificar si la consulta fue exitosa y devolver el resultado.
         if ($resultado) {
             return $resultado->fetch_all(MYSQLI_ASSOC);
         } else {
-            echo "Query execution failed.";
+            echo "La ejecución de la consulta falló.";
             return [];
         }
 
     } catch (Exception $e) {
         return [];
     } finally {
-        // Free the result set if it's not null.
+        // Liberar el conjunto de resultados si no es nulo.
         if ($resultado) {
             mysqli_free_result($resultado);
         }
 
-        // Close the database connection after using it.
+        // Cerrar la conexión a la base de datos después de usarla.
         if ($mysqli) {
             $mysqli->close();
         }
     }
 }
 
+/**
+ * Obtiene una fila específica de una o varias columnas y tablas en la base de datos.
+ *
+ * @param string $colums Columnas que se deben seleccionar (separadas por comas).
+ * @param string $tablas Tablas de las que se deben seleccionar los datos.
+ * @param string $id Valor del identificador (ID) para filtrar los resultados.
+ *
+ * @return mixed Array asociativo con los datos de la fila o false si hay un error.
+ */
 function sql_get_row($colums, $tablas, $id)
 {
     try {
@@ -370,6 +398,7 @@ function sql_get_row($colums, $tablas, $id)
         }
     }
 }
+
 
 /**
  * Ejecuta una consulta SELECT en la base de datos para recuperar datos de una tabla.
@@ -497,39 +526,57 @@ function sql_search($valores, $tabla, $clave, $valor, $offset = null, $count = n
 }
 
 
-function sql_query_update($tabla, $column, $valor, $id)
+/**
+ * Realiza una consulta SQL para actualizar un valor en una columna específica de una tabla.
+ *
+ * @param string $tabla Nombre de la tabla en la base de datos.
+ * @param string $column Nombre de la columna que se va a actualizar.
+ * @param mixed $valor Nuevo valor que se va a asignar a la columna.
+ * @param string $id Valor del identificador (ID) para filtrar.
+ *
+ * @return bool True si la actualización fue exitosa, false si hay un error.
+ */
+function sql_query_update($tabla, $column, $valor, $id): bool
 {
     try {
+        // Conectarse a la base de datos
         $mysqli = sql_conect();
         $consulta = $mysqli->stmt_init();
 
+        // Validar el valor según la columna especificada
         switch ($column) {
             case "nombre":
             case "apellido":
+                // Validar existencia y formato del nombre o apellido
                 if (!validaExistenciaVaribale($valor) || !validaNombreApellidos($valor)) {
                     throw new Exception("El $column no puede estar vacío y/o no puede contener caracteres especiales.");
                 }
                 break;
 
             case "apellido2":
+                // Validar formato del segundo apellido si no está vacío
                 if (!empty($valor) && !validaNombreApellidos($valor)) {
                     throw new Exception("El $column no puede contener caracteres especiales.");
                 }
                 break;
 
             case "nombre_usuario":
+                // Validar existencia y formato del nombre de usuario
                 if (!validaExistenciaVaribale($valor) || !validaUsuario($valor)) {
                     throw new Exception("El $column no puede estar vacío y/o no es válido.");
                 }
+                // Verificar si el nombre de usuario ya existe en la base de datos
                 if (sql_valida_usuario_correo($valor)) {
                     throw new Exception("El $column introducido ya existe.");
                 }
                 break;
 
             case "correo_electronico":
+                // Validar existencia y formato del correo electrónico
                 if (!validaExistenciaVaribale($valor) || (!validaEmail($valor) && trim($valor) !== '')) {
                     throw new Exception("El $column no puede estar vacío y/o debe contener una dirección de correo electrónico válida.");
                 }
+                // Verificar si el correo electrónico ya existe en la base de datos
                 if (sql_valida_usuario_correo($valor)) {
                     throw new Exception("El $column introducido ya existe.");
                 }
@@ -537,23 +584,30 @@ function sql_query_update($tabla, $column, $valor, $id)
 
             case "fecha_nacimiento":
             case "fecha_creacion":
+                // Validar que la fecha no esté vacía
                 if (empty($valor)) {
-                    throw new Exception("La $column no puede estar vacío.");
+                    throw new Exception("La $column no puede estar vacía.");
                 }
+                break;
+            case "dias_restantes":
                 break;
 
             default:
+                // Validar que el valor no esté vacío para otras columnas
                 if (empty($valor) || $valor == '') {
                     throw new Exception("No pueden haber campos vacíos.");
                 }
                 break;
         }
 
+        // Preparar la consulta SQL para actualizar la columna específica
         $consulta->prepare("UPDATE $tabla SET $column = ? WHERE ID = ?");
         $consulta->bind_param("ss", $valor, $id);
 
+        // Ejecutar la consulta
         $success = $consulta->execute();
 
+        // Verificar si la actualización fue exitosa y lanzar una excepción si no lo fue
         if (!$success) {
             throw new Exception($consulta->error);
         }
@@ -562,22 +616,26 @@ function sql_query_update($tabla, $column, $valor, $id)
 
     } catch (Exception $e) {
         echo $e->getMessage();
+        return false;
     } finally {
+        // Cerrar la conexión después de su uso
         if ($mysqli) {
             $mysqli->close();
         }
     }
+    return false;
 }
 
 
 /**
  * Actualiza el estado de un usuario en la base de datos.
  *
+ * @param string $tabla Nombre de la tabla la cual se ha obtener los datos.
  * @param int $id Identificador del usuario.
  *
  * @return array|mysqli|bool Resultado de la consulta.
  */
-function sql_update_estado($tabla, int $id): array|mysqli|bool
+function sql_update_estado(string $tabla, int $id): array|mysqli|bool
 {
     try {
         // Conectar a la base de datos
@@ -605,8 +663,6 @@ function sql_update_estado($tabla, int $id): array|mysqli|bool
         echo $e->getMessage();
         return [];
     } finally {
-
-
         // Cerrar la conexión a la base de datos después de usarla
         if ($mysqli) {
             $mysqli->close();
@@ -656,10 +712,20 @@ function sql_count_tabla($tabla)
 }
 
 
+/**
+ * Realiza una consulta SQL para insertar un nuevo registro en una tabla con los datos proporcionados.
+ *
+ * @param string $tabla Nombre de la tabla en la base de datos.
+ * @param array $datos Array asociativo con los datos a insertar (columna => valor).
+ *
+ * @return bool True si la inserción fue exitosa, false si hay un error.
+ */
 function sql_insertar_dato($tabla, $datos)
 {
     try {
+        // Conectarse a la base de datos
         $mysqli = sql_conect();
+
         $consulta = $mysqli->stmt_init();
 
         // Lista de columnas separadas por coma
@@ -689,20 +755,23 @@ function sql_insertar_dato($tabla, $datos)
         // Retornar true en caso de éxito
         return true;
     } catch (Exception $e) {
+        // Capturar y mostrar cualquier excepción
         echo $e->getMessage();
         return false;
     } finally {
-        // Cerrar la consulta después de su uso
-        if ($consulta) {
-            $consulta->close();
-        }
-
         // Cerrar la conexión después de utilizarla
         if ($mysqli) {
             $mysqli->close();
         }
+
+        // Cerrar la consulta después de su uso
+        if ($consulta) {
+            $consulta->close();
+        }
     }
 }
+
+
 
 /**
  * Obtiene información de libros de la base de datos.
@@ -713,7 +782,7 @@ function sql_insertar_dato($tabla, $datos)
  * @param string|null $search - Término de búsqueda para filtrar por título.
  * @return array - Array asociativo con la información de los libros.
  */
-function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC')
+function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC',$state=null)
 {
     try {
         // Establecer conexión a la base de datos.
@@ -739,6 +808,13 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
             Autores A ON L.ID_Autor = A.ID
         JOIN
             Editoriales E ON L.ID_Editorial = E.ID";
+
+        if (!is_null($state)){
+            $query .= " WHERE L.Estado = 1";
+        }
+        if (!is_null($state) && !is_null($search) && !is_null($tipo)){
+            $query .= " AND ";
+        }
 
         // Agregar condiciones para WHERE si se proporciona el término de búsqueda.
         if (!is_null($search) && !is_null($tipo)) {
@@ -790,6 +866,15 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
     }
 }
 
+/**
+ * Obtiene información detallada de un libro a partir de su ID.
+ *
+ * @param int $id ID del libro que se desea obtener.
+ * @param string $libro_id Nombre de la columna de ID en la tabla de Libros.
+ * @param int|null $state Estado del libro (opcional, por defecto es null).
+ *
+ * @return array Array asociativo con la información detallada del libro o un array vacío si no se encuentra.
+ */
 function sql_get_libro_by_id($id, $libro_id = "L.ID", $state = null)
 {
     try {
@@ -820,9 +905,11 @@ function sql_get_libro_by_id($id, $libro_id = "L.ID", $state = null)
         WHERE
             " . $libro_id . " = ?";
 
+        // Agregar condición para el estado si se proporciona.
         if (!is_null($state)) {
             $query .= " AND L.Estado = 1 ";
         }
+
         // Preparar la consulta SQL.
         $consulta->prepare($query);
 
@@ -838,7 +925,6 @@ function sql_get_libro_by_id($id, $libro_id = "L.ID", $state = null)
         // Devolver el resultado como un array asociativo.
         return $resultado->fetch_all(MYSQLI_ASSOC);
     } catch (Exception $e) {
-        // Manejar excepciones devolviendo un array vacío en caso de error.
         return [];
     } finally {
         // Cerrar la conexión a la base de datos si está abierta.
@@ -849,7 +935,13 @@ function sql_get_libro_by_id($id, $libro_id = "L.ID", $state = null)
 }
 
 
-
+/**
+ * Verifica si un libro con el título dado ya existe en la base de datos.
+ *
+ * @param string $titulo Título del libro que se desea verificar.
+ *
+ * @return bool True si el libro ya existe, false si no existe o hay un error.
+ */
 function sql_valida_libro($titulo)
 {
     try {
@@ -889,30 +981,47 @@ function sql_valida_libro($titulo)
     }
 }
 ;
-function sql_get_all_activos($columnas, $tabla)
+
+/**
+ * Obtiene todos los registros activos de una tabla específica.
+ *
+ * @param string $columnas Columnas que se desean seleccionar en la consulta.
+ * @param string $tabla Nombre de la tabla de la cual se obtendrán los registros.
+ *
+ * @return array Array asociativo con los resultados de la consulta o un array vacío si no hay resultados.
+ */
+function sql_get_all_activos($columnas, $tabla, $estado = "ESTADO")
 {
     try {
         $mysqli = sql_conect();
-        $consulta = $mysqli->stmt_init();
-        $query = "SELECT " . $columnas . " FROM " . $tabla . " WHERE ESTADO = 1 ";
 
+        // Inicializar una nueva declaración preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Construir la consulta SQL para seleccionar registros activos.
+        $query = "SELECT " . $columnas . " FROM " . $tabla . " WHERE " . $estado . " = 1 ";
+
+        // Preparar la consulta SQL.
         $consulta->prepare($query);
 
+        // Ejecutar la consulta.
         $consulta->execute();
+
+        // Obtener el resultado de la consulta.
         $resultado = $consulta->get_result();
 
-        // Verificar si la ejecución fue exitosa
+        // Verificar si la ejecución fue exitosa.
         if (!$resultado) {
             throw new Exception("Error en la ejecución de la consulta: " . $consulta->error);
         }
 
-        // Devolver resultados en un array asociativo
+        // Devolver resultados en un array asociativo.
         return $resultado->fetch_all(MYSQLI_ASSOC);
-
     } catch (Exception $e) {
+        error_log($e->getMessage());
         return [];
     } finally {
-        // Liberar resultados y cerrar conexión, si están definidos
+        // Liberar resultados y cerrar conexión, si están definidos.
         if (isset($resultado)) {
             mysqli_free_result($resultado);
         }
@@ -921,6 +1030,7 @@ function sql_get_all_activos($columnas, $tabla)
         }
     }
 
+    // Devolver un array vacío por defecto.
     return [];
 }
 
@@ -947,6 +1057,7 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
         $query = "SELECT
         Prestamos.ID,
         Usuarios.nombre AS NombreUsuario,
+        Usuarios.nombre_usuario As UsuarioNombreUsuario,
         Usuarios.Correo_Electronico AS CorreoElectronico,
         Libros.titulo AS NombreLibro,
         Prestamos.Fecha_inicio,
@@ -1007,5 +1118,73 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
         }
     }
 }
+
+
+/**
+ * Obtiene información de préstamos por su ID.
+ *
+ * @param int $id ID del préstamo que se desea obtener.
+ * @param string $prestamos_id Nombre de la columna ID en la tabla de préstamos.
+ * @param mixed $state Estado del préstamo (opcional).
+ *
+ * @return array Array asociativo con la información del préstamo o un array vacío si no hay resultados.
+ */
+function sql_get_prestamos_by_id($id, $prestamos_id = "Prestamos.ID", $state = null)
+{
+    try {
+        // Establecer conexión a la base de datos.
+        $mysqli = sql_conect();
+
+        // Inicializar una nueva declaración preparada.
+        $consulta = $mysqli->stmt_init();
+
+        // Construir la consulta SQL básica.
+        $query = "SELECT
+            Prestamos.ID,
+            Usuarios.nombre AS NombreUsuario,
+            Usuarios.nombre_usuario AS UsuarioNombreUsuario,
+            Usuarios.Correo_Electronico AS CorreoElectronico,
+            Libros.titulo AS NombreLibro,
+            Prestamos.Fecha_inicio,
+            Prestamos.Fecha_devolucion,
+            Prestamos.dias_restantes,
+            Prestamos.estado
+        FROM Prestamos
+        JOIN Usuarios ON Prestamos.ID_Usuario = Usuarios.ID
+        JOIN Libros ON Prestamos.ID_Libro = Libros.ID
+        WHERE
+            " . $prestamos_id . " = ?";
+
+        // Agregar condición para el estado si se proporciona.
+        if (!is_null($state)) {
+            $query .= " AND Prestamos.Estado = 1 ";
+        }
+
+        // Preparar la consulta SQL.
+        $consulta->prepare($query);
+
+        // Vincular el parámetro ID.
+        $consulta->bind_param("i", $id);
+
+        // Ejecutar la consulta.
+        $consulta->execute();
+
+        // Obtener el resultado de la consulta.
+        $resultado = $consulta->get_result();
+
+        // Devolver el resultado como un array asociativo.
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    } catch (Exception $e) {
+        // Manejar excepciones devolviendo un array vacío en caso de error.
+        error_log($e->getMessage());
+        return [];
+    } finally {
+        // Cerrar la conexión a la base de datos si está abierta.
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+
 
 ?>

@@ -1,6 +1,7 @@
 <?php
 /* En este archivo se controlará las peticiones que serán mandadas desde un cliente desde JavaScript
 en JavaScript estamos utilizando AXIOS*/
+
 header("Content-Type: application/json"); // Establece el encabezado de respuesta como JSON
 
 // Verificar el token
@@ -103,8 +104,11 @@ if (!empty($data)) {
             $response['response'] = sql_get_estado('Libros', $data['id'], $data['ForeignKey'], true);
 
             if (!is_null($response['response'])) {
-                $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD'] , true);
+                $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD'], true);
             }
+            
+            $response['prestamos'] = sql_get_prestamos_by_id($data['id'], 'Libros.ID_Autor', true);
+
 
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
@@ -118,10 +122,20 @@ if (!empty($data)) {
             if ($response['editoriales'] == 0 || !$response['editoriales']) {
                 $response['errorEditorial'] = 'El estado de editorial es inactivo , para poder activar el libro tendras que activar el autor';
             }
-            
+
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
             break;
+        case 'verificaPrestamo':
+            $response['response'] = sql_get_estado('Prestamos', $data['id'], $data['ForeignKey'], true);
+
+            if (!is_null($response['response'])) {
+                $response['prestamos'] = sql_get_prestamos_by_id($data['id'], $data['keyBD'], true);
+            }
+
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            break;
+
         default:
             // Acción no reconocida
             echo json_encode(['error' => 'Acción no válida.']);
@@ -148,7 +162,17 @@ if (isset($_GET['user']) && !empty($_GET['user'])) {
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
 
+if (isset($_GET['all']) && !empty($_GET['all'])) {
+    $endpoint = 'id ,nombre, apellido, apellido2, contraseña, nombre_usuario, correo_electronico, fecha_registro, rol,estado';
+    $endpoint2 = "id,Titulo, ID_Autor, ID_Editorial , fecha_creacion , Imagen";
+    if ($_GET["all"] == "all") {
+        $response['usuarios'] = sql_get_all_activos($endpoint, 'Usuarios');
+        $response['libros'] = sql_get_all_activos($endpoint2, 'Libros');
 
+    }
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
+}
 
 if (isset($_GET['autor']) && !empty($_GET['autor'])) {
     $PARAMETROSAUTOR = "ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, FECHA_CREACION, FECHA_MODIFICACION, ESTADO";
@@ -191,13 +215,25 @@ if (isset($_GET['libro']) && !empty($_GET['libro'])) {
         $response = sql_get_all_libros();
     } else {
         $response = sql_get_libro_by_id($_GET["libro"]);
-        $endpoint = ["Titulo", "ID_Autor", "ID_Editorial" , "fecha_creacion" , "Imagen"];
+        $endpoint = ["Titulo", "ID_Autor", "ID_Editorial", "fecha_creacion", "Imagen"];
         $response = array_merge($response, ValuesModify($endpoint, 'Libros', 'libro', $_GET));
     }
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
 }
 
+if (isset($_GET['prestamos']) && !empty($_GET['prestamos'])) {
 
+    if ($_GET["prestamos"] == "all") {
+        $response = sql_get_all_prestamos();
+    } else {
+        $response = sql_get_prestamos_by_id($_GET["prestamos"]);
+        $endpoint = ["dias_restantes"];
+        $response = array_merge($response, ValuesModify($endpoint, 'Prestamos', 'prestamos', $_GET));
+    }
+
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
+}
 
 ?>

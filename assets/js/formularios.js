@@ -37,7 +37,7 @@ export const enviarImagen = async () => {
 
       if (response.data.success) {
         console.log("Éxito:", response.data.success);
-        return response.data.nombreArchivo; 
+        return response.data.nombreArchivo;
       } else {
         console.error("Error:", response.data.error);
       }
@@ -46,7 +46,7 @@ export const enviarImagen = async () => {
     }
   }
 
-  return null; 
+  return null;
 };
 
 const enviarFormulario = async (formData, _action, message) => {
@@ -76,7 +76,7 @@ const enviarFormulario = async (formData, _action, message) => {
         response.data.action = "insertarLibroSucces";
         await postData(route, response.data);
         showSuccessMessage(`${message} añadido correctamente`);
-      }else {
+      } else {
         showSuccessMessage(`${message} añadido correctamente`);
       }
     }
@@ -227,11 +227,13 @@ export const showAutorForm = (response) => {
   });
 };
 
-
 export const showLibro = async (response) => {
   const selectAutor = await selects(`${route}&autor=all`, response.ID_Autor);
-  const selectEditorial = await selects(`${route}&editorial=all`, response.ID_Editorial);
-  
+  const selectEditorial = await selects(
+    `${route}&editorial=all`,
+    response.ID_Editorial
+  );
+
   const autorSelect = document.createElement("select");
   autorSelect.id = "ID_Autor";
   autorSelect.className = "swal2-select";
@@ -310,6 +312,39 @@ export const showEditorialForm = (response) => {
   });
 };
 
+export const showPrestamoForm = (response) => {
+  return Swal.fire({
+    title: `Datos del prestamo sobre el usuario: <strong>${response.UsuarioNombreUsuario}</strong> `,
+    html: `<form id="usuarioForm">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" class="swal2-input" placeholder="Nombre" value="${response.NombreUsuario}" disabled>
+
+            <label for="CorreoElectronico">Correo Electrónico:</label>
+            <input type="email" id="CorreoElectronico" class="swal2-input" value="${response.CorreoElectronico}" disabled>
+
+            <label for="NombreLibro">Nombre del libro :</label>
+            <input type="email" id="NombreLibro" class="swal2-input" value="${response.NombreLibro}" disabled>
+
+            <label for="fecha_creacion">Fecha de inicio:</label>
+            <input type="date" id="fecha_creacion" class="swal2-input" value="${response.Fecha_inicio}" disabled style="text-align: center;>
+        
+            <label for="dias_restantes">Dias restantes :</label>
+            <input type="number" id="dias_restantes" class="swal2-input" min="5" max="30" value="${response.dias_restantes}"  style="text-align: center;">
+
+
+
+          </form>`,
+
+    focusConfirm: false,
+    showCancelButton: true,
+    preConfirm: () => {
+      return {
+        dias_restantes: document.getElementById("dias_restantes").value,
+      };
+    },
+  });
+};
+
 export const showResponse = async (
   formData,
   response,
@@ -347,7 +382,6 @@ export const showResponse = async (
             setTimeout(() => {
               location.reload();
             }, 2000);
-
           } catch (error) {
             console.error(`NO SE HA PODIDO ACTUALIZAR: ${error}`);
             showErrorMessage(
@@ -367,3 +401,14 @@ export const showResponse = async (
   }
 };
 
+export const createSelect = (id, className, options) => {
+  const select = document.createElement("select");
+  select.id = id;
+  select.className = className;
+
+  options.forEach((el) => {
+    select.append(el);
+  });
+
+  return select;
+};

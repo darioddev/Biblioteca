@@ -2,7 +2,7 @@ import {
   showConfirmationDialog,
   showSuccessMessage,
 } from "./alert-functions.js";
-import { formularioAnade } from "./formularios.js";
+import { formularioAnade, createSelect } from "./formularios.js";
 import { routeGet } from "./path.js";
 import { getData, postData } from "./axios-functions.js";
 import { route } from "./path.js";
@@ -27,25 +27,20 @@ export const selects = async (routedata, defaultValue = "") => {
     console.error(error);
   }
 };
-/*
-const selectsDatos = async () => {
-  try {
-    const optionsAutor = await selects(`${route}&autor=all`, 2);
-    const optionsHTMLAutor = optionsAutor
-      .map((option) => option.outerHTML)
-      .join("");
 
-    const optionsEditorial = await selects(`${route}&editorial=all`);
-    const optionsHTMLEditorial = optionsEditorial
-      .map((option) => option.outerHTML)
-      .join("");
-    console.log(optionsHTMLEditorial);
+const selectsMap = (datos, defaultValue = "", tipo = "nombre") => {
+  return datos.map((el) => {
+    const option = document.createElement("option");
+    option.text = el[tipo];
+    option.value = el.id;
 
-    return { optionsHTMLAutor, optionsHTMLEditorial };
-  } catch (error) {
-    console.error("Error al obtener opciones:", error);
-  }
-};*/
+    if (Number(el.id) === Number(defaultValue)) {
+      option.defaultSelected = true;
+    }
+
+    return option;
+  });
+};
 
 export function initializeUI() {
   try {
@@ -122,7 +117,7 @@ export function initializeUserModule() {
   try {
     // Ocultar opciones según el estado
     const stateElements = document.querySelectorAll(".table-state span");
-    console.log(stateElements)
+    console.log(stateElements);
 
     Array.from(stateElements).forEach((el) => {
       if (el.textContent.toUpperCase().trim() === "ACTIVO") {
@@ -132,8 +127,7 @@ export function initializeUserModule() {
         if (optionLink) {
           optionLink.style.display = "none";
         }
-          el.style.backgroundColor = "#57c975";
-        
+        el.style.backgroundColor = "#57c975";
       } else {
         const optionLink = el
           .closest("tr")
@@ -141,9 +135,8 @@ export function initializeUserModule() {
         if (optionLink) {
           optionLink.style.display = "none";
         }
-          el.style.backgroundColor = "red";
-          el.style.color = "white";
-        
+        el.style.backgroundColor = "red";
+        el.style.color = "white";
       }
     });
 
@@ -204,6 +197,30 @@ export const initializeUserInterface = async () => {
         let formulario = undefined;
         let message = undefined;
         let _action = undefined;
+
+        const autorSelect = createSelect(
+          "ID_Autor",
+          "swal2-select",
+          optionsAutor
+        );
+        const editorialSelect = createSelect(
+          "ID_Editorial",
+          "swal2-select",
+          optionsEditorial
+        );
+
+        const { usuarios, libros } = await getData(`${route}&all=all`);
+
+        const UsuarioSelect = createSelect(
+          "ID_Usuario",
+          "swal2-select",
+          selectsMap(usuarios,"","nombre_usuario")
+        );
+        const LibroSelect = createSelect(
+          "ID_Usuario",
+          "swal2-select",
+          selectsMap(libros, "", "Titulo")
+        );
 
         switch (action) {
           case "usuarios":
@@ -279,21 +296,6 @@ export const initializeUserInterface = async () => {
             title = "Registro de un nuevo libro";
             _action = "insertarLibro";
             message = "libro";
-            const autorSelect = document.createElement("select");
-            autorSelect.id = "ID_Autor";
-            autorSelect.className = "swal2-select";
-
-            optionsAutor.forEach((el) => {
-              autorSelect.append(el);
-            });
-
-            const editorialSelect = document.createElement("select");
-            editorialSelect.id = "ID_Editorial";
-            editorialSelect.className = "swal2-select";
-
-            optionsEditorial.forEach((el) => {
-              editorialSelect.append(el);
-            });
 
             formulario = `
           <form id="usuarioForm">
@@ -306,6 +308,27 @@ export const initializeUserInterface = async () => {
               <label for="ID_Editorial">Seleccione la editorial :</label>
               ${editorialSelect.outerHTML}
           </form>`;
+            break;
+          case "prestamos":
+            title = "Registro de un prestamo";
+            _action = "insertarPrestamo";
+            message = "prestamo";
+            formulario = `
+            <form id="usuarioForm">
+        
+                <label for="ID_Usuario">Seleccione el usuario :</label>
+                ${UsuarioSelect.outerHTML}
+        
+                <label for="ID_Libro">Seleccione el libro :</label>
+                ${LibroSelect.outerHTML}
+                <div></div>
+                <label for="Fecha_inicio">Fecha de inicio:</label>
+                <div></div>
+                <input type="date" id="Fecha_inicio" class="swal2-input" placeholder="Por defecto el dia de hoy" required  style="text-align: center;" >
+
+                <label for="dias_restantes">Dias para devolver:</label>
+                <input type="number" id="dias_restantes" class="swal2-input" value="15" min="5" max="30"required  style="text-align: center;" >
+            </form>`;
             break;
         }
 
