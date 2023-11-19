@@ -162,10 +162,6 @@ export const showUserForm = (response) => {
         <input type="date" id="FECHA_REGISTRO" class="swal2-input" value="${
           response.FECHA_REGISTRO
         }" required style="text-align: center;>
-
-        <label for="CONTRASENA">Asignar una nueva contraseña : </label>
-        <input type="password" id="CONTRASENA" class="swal2-input">
-
         <label for="FECHA_MODIFICACION">ULTIMA FECHA DE MODIFICACION:</label>
         <input type="text" id="FEHCA_MODIFICACION" class="swal2-input" placeholder="Nombre de Usuario" value="${
           response.FECHA_MODIFICACION
@@ -190,7 +186,6 @@ export const showUserForm = (response) => {
         apellido: document.getElementById("APELLIDO").value,
         apellido2: document.getElementById("APELLIDO2").value || "",
         nombre_usuario: document.getElementById("NOMBRE_USUARIO").value,
-        contrasena: document.getElementById("CONTRASENA").value,
         correo_electronico: document.getElementById("CORREO_ELECTRONICO").value,
         fecha_registro: document.getElementById("FECHA_REGISTRO").value,
         rol: document.getElementById("ROL").value,

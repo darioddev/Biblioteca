@@ -43,7 +43,6 @@ if (isset($_GET["page"])) {
 }
 
 if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
-    //$sentencia = "ID_AUTOR, NOMBRE, APELLIDO, FECHA_NACIMIENTO, FECHA_CREACION, FECHA_MODIFICACION, ESTADO";
     $usuarios = sql_search(PARAMETROS, 'Autores', $_GET['type'], '%' . $_GET['search'] . '%');
     $pages = pages($_GET, $initalize, (int) count($usuarios));
 
