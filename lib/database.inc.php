@@ -1096,7 +1096,7 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
         // Preparar la consulta SQL.
         $consulta->prepare($query);
 
-            // Bindear los parámetros según las condiciones.
+        // Bindear los parámetros según las condiciones.
         $bindParams = ""; // Cadena para almacenar los tipos de parámetros.
         $bindValues = []; // Array para almacenar los valores de parámetros.
 

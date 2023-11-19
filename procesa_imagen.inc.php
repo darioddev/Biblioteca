@@ -31,7 +31,6 @@ if (!empty($_FILES) && isset($_FILES['Archivo']) && $_FILES['Archivo']['error'] 
     $rutaCompleta = $route . $nombreArchivo;
 
     if (move_uploaded_file($file['tmp_name'], $rutaCompleta)) {
-        // Aquí puedes realizar otras acciones, como insertar en la base de datos
         echo json_encode(['success' => 'Archivo subido y procesado exitosamente!', 'nombreArchivo' => $rutaCompleta]);
     } else {
         echo json_encode(['error' => 'Lo siento, el archivo no se ha subido, por favor, inténtalo de nuevo.']);

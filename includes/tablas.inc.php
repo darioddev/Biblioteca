@@ -1,4 +1,12 @@
 <?php
+/**
+ * Genera una tabla HTML con encabezados, datos y columnas de iconos.
+ *
+ * @param string $classname La clase CSS de la tabla.
+ * @param array $heads Un array con los encabezados de la tabla.
+ * @param array $dataTabla Un array con los datos de la tabla.
+ * @param array $dataIcon Un array con las columnas de iconos para cada fila.
+ */
 function tableAdd(string $classname, array $heads, array $dataTabla, array $dataIcon)
 {
     ?>

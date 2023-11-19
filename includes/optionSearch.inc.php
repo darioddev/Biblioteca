@@ -1,4 +1,15 @@
 <?php
+/**
+ * Genera opciones de ordenación para un elemento select en un formulario.
+ *
+ * @param string $classname La clase CSS del contenedor div externo.
+ * @param string $idSelect El ID del elemento select.
+ * @param string $tipo El tipo de ordenación (por ejemplo, "UsuariosOrdenacion").
+ * @param string $SESSION Variable de sesión que contiene información sobre la ordenación (opcional).
+ * @param string $nameColumna El nombre de la columna utilizada para ordenar (opcional).
+ * @param string $nameOrdenacion El tipo de ordenación (ASC o DESC) (opcional).
+ */
+
 function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColumna = '', $nameOrdenacion = '', $data = '')
 {
     ?>
@@ -266,10 +277,19 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
 
 }
 
+
+/**
+ * Genera un formulario de búsqueda con un campo de entrada y botones.
+ *
+ * @param string $route La URL a la que apunta el formulario.
+ * @param string $id El ID del formulario.
+ * @return void
+ */
 function formSearch($route, $id)
 {
     ?>
     <form method="GET" action="<?php echo $route ?>" class="form" id="<?php echo $id ?>">
+        <!-- Botón de búsqueda con un ícono SVG -->
         <button>
             <svg width="17" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="search">
                 <path d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
@@ -277,7 +297,11 @@ function formSearch($route, $id)
                 </path>
             </svg>
         </button>
+
+        <!-- Campo de entrada de búsqueda -->
         <input class="inputSearch" placeholder="Buscar ... " required="" type="text" name="search" />
+
+        <!-- Botón de reinicio con un ícono SVG -->
         <button class="reset" type="reset">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 stroke-width="2">
@@ -287,5 +311,4 @@ function formSearch($route, $id)
     </form>
     <?php
 }
-
 ?>

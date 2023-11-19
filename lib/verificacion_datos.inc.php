@@ -9,7 +9,7 @@
  * @param string $id Identificador único para la condición WHERE en la actualización.
  * @return array Un array que contiene la respuesta de las actualizaciones, incluyendo posibles errores.
  */
-function ValuesModify(array $endpoint, $tabla, $id , $get)
+function ValuesModify(array $endpoint, $tabla, $id, $get)
 {
     $response = []; // Inicializar el array de respuesta.
 
@@ -18,8 +18,8 @@ function ValuesModify(array $endpoint, $tabla, $id , $get)
         // Verificar si el parámetro está presente en la solicitud ($_GET).
         if (isset($get[$value])) {
             // Procesar la fecha de nacimiento si es necesario.
-                // Actualizar el valor en la tabla.
-                $sentencia = sql_query_update($tabla, $value, $get[$value], $get[$id]);
+            // Actualizar el valor en la tabla.
+            $sentencia = sql_query_update($tabla, $value, $get[$value], $get[$id]);
             // Verificar si la sentencia de actualización fue exitosa.
             if ($sentencia !== true) {
                 // Agregar información sobre el error al array de respuesta.
@@ -80,7 +80,7 @@ function formularioDatosUsuario($datosFormulario)
 function formularioDatosAutor($datosFormulario)
 {
     $errores_campos = []; // Inicializar el array de errores.
-    
+
     // Definir mensajes de error asociados a cada campo.
     $errores_mensajes = [
         'nombre' => 'El campo nombre no puede estar vacío y/o no puede contener caracteres especiales.',
@@ -115,7 +115,7 @@ function formularioDatosAutor($datosFormulario)
 function formularioDatosEditorial($datosFormulario)
 {
     $errores_campos = []; // Inicializar el array de errores.
-    
+
     // Definir mensajes de error asociados a cada campo.
     $errores_mensajes = [
         'nombre' => 'El campo nombre no puede estar vacío y/o no puede contener caracteres especiales.',
@@ -142,7 +142,8 @@ function formularioDatosEditorial($datosFormulario)
  * @param array $errores_campos Array de errores del formulario.
  * @return array Un array formateado con los errores.
  */
-function formatearErrores($errores_campos) {
+function formatearErrores($errores_campos)
+{
     $errorsArray = [];
 
     // Recorre cada error y lo agrega al array formateado.
@@ -156,26 +157,58 @@ function formatearErrores($errores_campos) {
     return $errorsArray;
 }
 
-function proccesaData($errores_campos,$data,$tabla,$array) {
+
+/**
+ * Procesa datos y maneja errores.
+ *
+ * @param array $errores_campos Un array que contiene errores en los campos.
+ * @param mixed $data Los datos a procesar.
+ * @param string $tabla El nombre de la tabla en la base de datos.
+ * @param array $array Un array con los datos a insertar en la base de datos.
+ * @return array La respuesta del proceso, puede contener un mensaje de éxito, advertencia o error.
+ */
+function procesaData(array $errores_campos, $data, string $tabla, array $array): array
+{
+    /** Verifica si no hay errores en los campos */
     if (empty($errores_campos)) {
-      
+        /** Intenta insertar datos en la base de datos */
         $value = sql_insertar_dato($tabla, $array);
 
+        /** Comprueba si la inserción fue exitosa */
         if ($value) {
-            $response = ['success' => 'Datos insertados correctamente.'];
+            return ['success' => 'Datos insertados correctamente.'];
         } else {
-            $response = ['warning' => 'Hubo un problema en la inserción de datos'];
+            /** Si hubo un problema en la inserción, genera un mensaje de advertencia */
+            return ['warning' => 'Hubo un problema en la inserción de datos'];
         }
 
     } else {
+        /** Si hay errores en los campos, formatea los errores y devuelve una respuesta de error */
         $errorsArray = formatearErrores($errores_campos);
-        $response = ['error' => '', 'errors' => $errorsArray];
+        return ['error' => '', 'errors' => $errorsArray];
     }
-    return $response;
 }
 
-
-
+/**
+ * Muestra mensajes de alerta usando SweetAlert.
+ *
+ * @param string $title El título del mensaje de alerta.
+ * @param string $message El contenido del mensaje de alerta.
+ * @param string $icon El icono a mostrar en el mensaje de alerta.
+ * @return void
+ */
+function echoAlert(string $title, string $message, string $icon): void
+{
+    ?>
+    <script>
+        Swal.fire({
+            title: '<?php echo $title; ?>',
+            html: '<?php echo $message; ?>',
+            icon: '<?php echo $icon; ?>',
+        })
+    </script>
+    <?php
+}
 
 //Funcion que valida que los campos estan declarados y no son vacios
 function validaExistenciaVaribale($variable): bool

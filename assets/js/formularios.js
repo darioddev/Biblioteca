@@ -1,5 +1,10 @@
 import { postData, getData } from "./axios-functions.js";
-import { showErrorMessage, showSuccessMessage ,showInformationMessage , showConfirmationDialog} from "./alert-functions.js";
+import {
+  showErrorMessage,
+  showSuccessMessage,
+  showInformationMessage,
+  showConfirmationDialog,
+} from "./alert-functions.js";
 import { selects } from "./ui-module.js";
 import { route } from "./path.js";
 
@@ -380,11 +385,11 @@ export const showResponse = async (
             if (message !== "") {
               mensaje = `El ${message} ha sido modificado.`;
             } else {
-              mensaje = 'Los datos han sido modificados';
+              mensaje = "Los datos han sido modificados";
             }
 
-            showSuccessMessage("Modificado!",mensaje);
-  
+            showSuccessMessage("Modificado!", mensaje);
+
             setTimeout(() => {
               location.reload();
             }, 3000);
@@ -432,10 +437,15 @@ export const formularioDatos = () => {
 
       if (confirmaEnvio) {
         const [response] = await getData(event.target.action);
-        showResponse(formData, response, "user", "");
-        setTimeout(() => {
-          window.location.href = formularioInformaiconPersonal["url"].value;
-        }, 2000);
+        try {
+          const respuesta = await showResponse(formData, response, "user", "");
+          console.log(respuesta);
+          /*setTimeout(() => {
+            window.location.href = formularioInformaiconPersonal["url"].value;
+          }, 2000);*/
+        } catch (error) {
+          console.log(error);
+        }
       }
     });
   } catch (error) {
