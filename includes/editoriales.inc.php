@@ -1,4 +1,10 @@
 <?php
+
+if (isset($_SESSION['rol']) && $_SESSION['rol'] != 'ADMIN') {
+    header("Location: " . $_SERVER["PHP_SELF"] . "?ruta=404");
+    die();
+}
+
 $initalize = initializeRow("rowEditorial");
 define('PARAMETROSEDITORIAL', "ID, NOMBRE, FECHA_CREACION , FECHA_MODIFICACION ,ESTADO");
 $pages = pages($_GET, $initalize, 'Editoriales');
@@ -6,8 +12,8 @@ $pages = pages($_GET, $initalize, 'Editoriales');
 
 initializeSession('columnaEditorial', 'ordenacionEditorial', 'rowEditorial', 'pageEditorial', 'nombre', 'ASC', $initalize, 1);
 
-if(isset($_SESSION['rowEditorial']) && empty($_SESSION['rowEditorial'])) {
-    $_SESSION['rowEditorial'] = 5 ;
+if (isset($_SESSION['rowEditorial']) && empty($_SESSION['rowEditorial'])) {
+    $_SESSION['rowEditorial'] = 5;
 }
 
 if (isset($_GET["remove"]) && !empty(trim($_GET["remove"]))) {
@@ -84,7 +90,8 @@ if (count($usuarios) < $initalize) {
         <div class="table-options">
             <div class="table-options-row">
                 <span>
-                    <input type="number" name="rows" id="rows" value="<?php echo $_SESSION['rowEditorial'] ?>" min="0" max="20">
+                    <input type="number" name="rows" id="rows" value="<?php echo $_SESSION['rowEditorial'] ?>" min="0"
+                        max="20">
                 </span>
             </div>
             <div class="table-options-search">
@@ -106,7 +113,7 @@ if (count($usuarios) < $initalize) {
             paginaLinks('pagination', $pages[1], $route);
             ?>
             <?php
-            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ','editoriales')
+            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'editoriales')
                 ?>
         </div>
         <?php
@@ -121,11 +128,11 @@ if (count($usuarios) < $initalize) {
         require_once("./includes/nofound.php");
 
     } else {
-        $heads = ['ID', 'NOMBRE', 'FECHA_CREACION','FECHA_MODIFICACION', 'ESTADO','ACCIONES'];
+        $heads = ['ID', 'NOMBRE', 'FECHA_CREACION', 'FECHA_MODIFICACION', 'ESTADO', 'ACCIONES'];
         $icons = array(
-            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&editorial=", "fas fa-user-cog", "modificado","editoriales"),
-            array("option-link alt", "?ruta=editoriales&remove=", "fas fa-trash-alt", "borrado","editorial","ID_Editorial","verificaEstado"),
-            array("option-link check", "?ruta=editoriales&remove=", "fas fa-user-check", "reactivar","")
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&editorial=", "fas fa-user-cog", "modificado", "editoriales"),
+            array("option-link alt", "?ruta=editoriales&remove=", "fas fa-trash-alt", "borrado", "editorial", "ID_Editorial", "verificaEstado"),
+            array("option-link check", "?ruta=editoriales&remove=", "fas fa-user-check", "reactivar", "")
         );
 
         tableAdd("table", $heads, $usuarios, $icons);

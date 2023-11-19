@@ -162,7 +162,7 @@ function proccesaData($errores_campos,$data,$tabla,$array) {
         $value = sql_insertar_dato($tabla, $array);
 
         if ($value) {
-            $response = ['success' => 'Datos del autor insertados correctamente.'];
+            $response = ['success' => 'Datos insertados correctamente.'];
         } else {
             $response = ['warning' => 'Hubo un problema en la inserción de datos'];
         }
@@ -173,6 +173,8 @@ function proccesaData($errores_campos,$data,$tabla,$array) {
     }
     return $response;
 }
+
+
 
 
 //Funcion que valida que los campos estan declarados y no son vacios

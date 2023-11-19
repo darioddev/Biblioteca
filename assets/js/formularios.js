@@ -80,6 +80,7 @@ const enviarFormulario = async (formData, _action, message) => {
         showSuccessMessage(`${message} añadido correctamente`);
       }
     }
+    console.log(response);
   } catch (error) {
     console.error("Error en la petición:", error);
     showErrorMessage("Oops...", "Algo ha salido mal! Vuelve a intentarlo");

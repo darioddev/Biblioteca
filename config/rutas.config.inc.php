@@ -14,5 +14,6 @@
         'reportes' => './includes/reportes.inc.php',
         'logout' => './includes/logout.inc.php',
         'prestamos' => './includes/prestamos.inc.php',
+        '404' => './includes/404.inc.php',
     ]
 ?>

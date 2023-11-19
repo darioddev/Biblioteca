@@ -1,4 +1,11 @@
 <?php
+
+if (isset($_SESSION['rol']) && $_SESSION['rol'] != 'ADMIN') {
+    header("Location: " . $_SERVER["PHP_SELF"] . "?ruta=404");
+    die();
+}
+
+
 $initalize = initializeRow("rowAutor");
 define('PARAMETROS', "ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, FECHA_CREACION, FECHA_MODIFICACION, ESTADO");
 $pages = pages($_GET, $initalize, 'Autores');
@@ -7,8 +14,8 @@ $pages = pages($_GET, $initalize, 'Autores');
 
 initializeSession('columnaAutor', 'ordenacionAutor', 'rowAutor', 'pageAutor', 'nombre', 'ASC', $initalize, 1);
 
-if(isset($_SESSION['rowAutor']) && empty($_SESSION['rowAutor'])) {
-    $_SESSION['rowAutor'] = 5 ;
+if (isset($_SESSION['rowAutor']) && empty($_SESSION['rowAutor'])) {
+    $_SESSION['rowAutor'] = 5;
 }
 
 if (isset($_GET["remove"]) && !empty(trim($_GET["remove"]))) {
@@ -107,7 +114,7 @@ if (count($usuarios) < $initalize) {
             paginaLinks('pagination', $pages[1], $route);
             ?>
             <?php
-            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ','autores')
+            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'autores')
                 ?>
         </div>
         <?php
@@ -124,9 +131,9 @@ if (count($usuarios) < $initalize) {
     } else {
         $heads = ['ID', 'NOMBRE', 'APELLIDO', 'FECHA NACIMIENTO', 'FECHA CREACION', 'FECHA_MODIFICACION', 'ESTADO', 'ACCIONES'];
         $icons = array(
-            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&autor=", "fas fa-user-cog", "modificado","autores"),
-            array("option-link alt", "?ruta=autores&remove=", "fas fa-trash-alt", "borrado","autor","ID_Autor","verificaEstado"),
-            array("option-link check", "?ruta=autores&remove=", "fas fa-user-check", "reactivar","")
+            array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&autor=", "fas fa-user-cog", "modificado", "autores"),
+            array("option-link alt", "?ruta=autores&remove=", "fas fa-trash-alt", "borrado", "autor", "ID_Autor", "verificaEstado"),
+            array("option-link check", "?ruta=autores&remove=", "fas fa-user-check", "reactivar", "")
         );
 
         tableAdd("table", $heads, $usuarios, $icons);

@@ -206,15 +206,23 @@ try {
       switch (state) {
         case "verificaReactivacion":
           try {
-            const { errorAutor, errorEditorial } = await postData(route, {
-              id: id_borrado,
-              ForeignKey: key,
-              action: "verificaReactivacion",
-            });
+            const split_libro = event.target.href.split("=");
+            const id_libro = split_libro[split_libro.length - 1];
+
+            const { errorAutor, errorEditorial, prestamos } = await postData(
+              route,
+              {
+                id: id_borrado,
+                ForeignKey: key,
+                ID_Libro: id_libro,
+                action: "verificaReactivacion",
+              }
+            );
+            console.log(prestamos);
 
             if (errorAutor !== undefined) error.push(errorAutor);
             if (errorEditorial !== undefined) error.push(errorEditorial);
-
+            if (prestamos.length !== 0) throw new Error("prestamos activos");
             if (error.length !== 0) {
               throw new Error("Autor y/o editorial estan inactivos");
             }
@@ -244,17 +252,27 @@ try {
               .join(""); // Agregado join("") para convertir el array en una cadena
 
             // Mostrar el mensaje de error solo una vez
-            const errorMessage = `
-    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ccc;">
-      <p style="font-weight: bold; margin-bottom: 5px;">Ha ocurrido un problema.</p>
+            let errorMessage = `
+            <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24; border-radius: 5px;">
+            <p style="font-weight: bold; margin-bottom: 5px;">Ha ocurrido un problema.</p>
       <p>No puedes eliminar un libro si el <strong>autor</strong> y/o <strong>editorial</strong> estan inactivos. </p>
       ${librosHtml}
     </div>
   `;
-            showErrorMessage("", errorMessage);
-          }
 
-          break;
+            if (err.message === "prestamos activos") {
+              errorMessage = `
+              <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24; border-radius: 5px;">
+                  <p style="font-weight: bold; margin-bottom: 5px;">Ha ocurrido un problema.</p>
+                  <p>No puedes volver a activar este libro porque está actualmente prestado por un usuario. Asegúrate de que el libro haya sido devuelto antes de intentar activarlo nuevamente.</p>
+              </div>
+          `;
+            }
+
+            showErrorMessage("", errorMessage);
+
+            break;
+          }
         default:
           url = await handleConfirmation(
             url,

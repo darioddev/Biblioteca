@@ -217,7 +217,7 @@ export const initializeUserInterface = async () => {
           selectsMap(usuarios,"","nombre_usuario")
         );
         const LibroSelect = createSelect(
-          "ID_Usuario",
+          "ID_Libro",
           "swal2-select",
           selectsMap(libros, "", "Titulo")
         );

@@ -122,7 +122,8 @@ if (!empty($data)) {
             if ($response['editoriales'] == 0 || !$response['editoriales']) {
                 $response['errorEditorial'] = 'El estado de editorial es inactivo , para poder activar el libro tendras que activar el autor';
             }
-
+            $response['prestamos'] = sql_get_prestamos_by_id($data['ID_Libro'], 'ID_Libro', true);
+    
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
             break;
@@ -133,6 +134,18 @@ if (!empty($data)) {
                 $response['prestamos'] = sql_get_prestamos_by_id($data['id'], $data['keyBD'], true);
             }
 
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            break;
+        case 'insertarPrestamo' :
+            $errores_campos = [];
+            $array = [
+                'ID_Usuario' => $data['ID_Usuario'],
+                'ID_Libro' => $data['ID_Libro'],
+                'Fecha_inicio' => date("Y-m-d"),
+                'dias_restantes' => $data['dias_restantes']
+            ];
+            $response = proccesaData($errores_campos, $data, 'Prestamos', $array);
+            sql_update_estado('Libros', $data["ID_Libro"]);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
 

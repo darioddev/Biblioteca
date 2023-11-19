@@ -1,4 +1,10 @@
 <?php
+
+if(isset($_SESSION['rol']) && $_SESSION['rol'] != 'ADMIN') {
+    header("Location: " . $_SERVER["PHP_SELF"] . "?ruta=404");
+    die();
+}
+
 $initalize = initializeRow("row");
 
 $pages = pages($_GET, $initalize, 'Usuarios');
