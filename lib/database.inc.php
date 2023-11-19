@@ -782,7 +782,7 @@ function sql_insertar_dato($tabla, $datos)
  * @param string|null $search - Término de búsqueda para filtrar por título.
  * @return array - Array asociativo con la información de los libros.
  */
-function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC',$state=null)
+function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC', $state = null)
 {
     try {
         // Establecer conexión a la base de datos.
@@ -809,10 +809,10 @@ function sql_get_all_libros($offset = null, $count = null, $tipo = null, $search
         JOIN
             Editoriales E ON L.ID_Editorial = E.ID";
 
-        if (!is_null($state)){
+        if (!is_null($state)) {
             $query .= " WHERE L.Estado = 1";
         }
-        if (!is_null($state) && !is_null($search) && !is_null($tipo)){
+        if (!is_null($state) && !is_null($search) && !is_null($tipo)) {
             $query .= " AND ";
         }
 
@@ -1044,7 +1044,7 @@ function sql_get_all_activos($columnas, $tabla, $estado = "ESTADO")
  * @param string|null $search - Término de búsqueda para filtrar por título.
  * @return array - Array asociativo con la información de los libros.
  */
-function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC')
+function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $search = null, $columna = null, $ordenTipo = 'ASC', $state = null)
 {
     try {
         // Establecer conexión a la base de datos.
@@ -1055,7 +1055,8 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
 
         // Construir la consulta SQL básica.
         $query = "SELECT
-        Prestamos.ID,
+        Prestamos.ID ,
+        Libros.Imagen AS ImagenLibro,
         Usuarios.nombre AS NombreUsuario,
         Usuarios.nombre_usuario As UsuarioNombreUsuario,
         Usuarios.Correo_Electronico AS CorreoElectronico,
@@ -1063,11 +1064,18 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
         Prestamos.Fecha_inicio,
         Prestamos.Fecha_devolucion,
         Prestamos.dias_restantes,
-        Prestamos.estado
+        Prestamos.estado AS EstadoPrestamo
     FROM Prestamos
     JOIN Usuarios ON Prestamos.ID_Usuario = Usuarios.ID
     JOIN Libros ON Prestamos.ID_Libro = Libros.ID
     ";
+        if (!is_null($state)) {
+            $query .= " WHERE Usuarios.ID = ?";
+        }
+
+        if (!is_null($state) && !is_null($search) && !is_null($tipo)) {
+            $query .= " AND ";
+        }
 
         // Agregar condiciones para WHERE si se proporciona el término de búsqueda.
         if (!is_null($search) && !is_null($tipo)) {
@@ -1088,16 +1096,31 @@ function sql_get_all_prestamos($offset = null, $count = null, $tipo = null, $sea
         // Preparar la consulta SQL.
         $consulta->prepare($query);
 
-        if (!is_null($search) && !is_null($offset) && !is_null($count)) {
-            $searchParam = "%" . $search . "%";
-            $consulta->bind_param("sii", $searchParam, $offset, $count);
-        } elseif (!is_null($search)) {
-            $searchParam = "%" . $search . "%";
-            $consulta->bind_param("s", $searchParam);
-        } elseif (!is_null($offset) && !is_null($count)) {
-            $consulta->bind_param("ii", $offset, $count);
+            // Bindear los parámetros según las condiciones.
+        $bindParams = ""; // Cadena para almacenar los tipos de parámetros.
+        $bindValues = []; // Array para almacenar los valores de parámetros.
+
+        if (!is_null($state)) {
+            $bindParams .= "i";
+            $bindValues[] = $state;
         }
 
+        if (!is_null($search)) {
+            $searchParam = "%" . $search . "%";
+            $bindParams .= "s";
+            $bindValues[] = $searchParam;
+        }
+
+        if (!is_null($offset) && !is_null($count)) {
+            $bindParams .= "ii";
+            $bindValues[] = $offset;
+            $bindValues[] = $count;
+        }
+
+        // Hacer la llamada a bind_param.
+        if (!empty($bindParams) && !empty($bindValues)) {
+            $consulta->bind_param($bindParams, ...$bindValues);
+        }
 
         // Ejecutar la consulta.
         $consulta->execute();

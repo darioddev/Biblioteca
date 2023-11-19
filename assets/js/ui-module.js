@@ -7,6 +7,7 @@ import { routeGet } from "./path.js";
 import { getData, postData } from "./axios-functions.js";
 import { route } from "./path.js";
 
+
 export const selects = async (routedata, defaultValue = "") => {
   try {
     const autores = await getData(`${routedata}`);
@@ -337,6 +338,7 @@ export const initializeUserInterface = async () => {
         }
       });
     }
+    if(busquedaForm){
 
     busquedaForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -362,6 +364,7 @@ export const initializeUserInterface = async () => {
         }
       });
     });
+  }
 
     selectOrdenacion.addEventListener("change", (e) => {
       actualizarURL(e.target.dataset.name);

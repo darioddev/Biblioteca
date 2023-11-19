@@ -229,6 +229,9 @@
 .option-table ul li.option-link.check {
   background-color: #2ecc71; ;
 }
+.option-table ul li.option-link.upload {
+  background-color: var(--primary-color);
+}
 
 .option-table ul li.cog {
   background-color: var(--primary-color);

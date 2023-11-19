@@ -3,6 +3,7 @@ import {
   showSuccessMessage,
   showErrorMessage,
   handleConfirmation,
+  showInformationMessage,
 } from "./alert-functions.js";
 import { getData, postData } from "./axios-functions.js";
 
@@ -20,6 +21,7 @@ import {
   showLibro,
   enviarImagen,
   showPrestamoForm,
+  formularioDatos,
 } from "./formularios.js";
 /* Navegador */
 initializeUI();
@@ -27,6 +29,10 @@ initializeUI();
 initializeUserModule();
 
 initializeUserInterface();
+
+formularioDatos();
+
+// Función para mostrar el formulario de registro de usuario
 
 try {
   document.querySelector("table").addEventListener("click", async (event) => {
@@ -319,6 +325,17 @@ try {
         );
 
         if (confirmacion) {
+          url = event.target.href;
+        }
+        break;
+      case "devolverLibro":
+        const confirmacionDevolver = await showConfirmationDialog(
+          "¿Estás seguro?",
+          "Deseas devolver este libro",
+          "Confirmar"
+        );
+
+        if (confirmacionDevolver) {
           url = event.target.href;
         }
         break;

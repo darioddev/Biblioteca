@@ -15,5 +15,6 @@
         'logout' => './includes/logout.inc.php',
         'prestamos' => './includes/prestamos.inc.php',
         '404' => './includes/404.inc.php',
+        'configuracion' => './includes/configuracion.inc.php',
     ]
 ?>

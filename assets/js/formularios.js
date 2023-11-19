@@ -1,5 +1,5 @@
 import { postData, getData } from "./axios-functions.js";
-import { showErrorMessage, showSuccessMessage } from "./alert-functions.js";
+import { showErrorMessage, showSuccessMessage ,showInformationMessage , showConfirmationDialog} from "./alert-functions.js";
 import { selects } from "./ui-module.js";
 import { route } from "./path.js";
 
@@ -364,10 +364,12 @@ export const showResponse = async (
       await Promise.all(
         Object.entries(checkData).map(async ([key, value]) => {
           try {
+            let mensaje;
+
             const result = await getData(
               `${route}&${paramt}=${response.ID}&${key}=${value}`
             );
-
+            console.log(result);
             if (
               result[1] !== undefined &&
               Object.keys(result[1]).length !== 0
@@ -375,14 +377,17 @@ export const showResponse = async (
               throw new Error(result[1].error);
             }
 
-            showSuccessMessage(
-              "Modificado!",
-              `El ${message} ha sido modificado.`
-            );
+            if (message !== "") {
+              mensaje = `El ${message} ha sido modificado.`;
+            } else {
+              mensaje = 'Los datos han sido modificados';
+            }
 
+            showSuccessMessage("Modificado!",mensaje);
+  
             setTimeout(() => {
               location.reload();
-            }, 2000);
+            }, 3000);
           } catch (error) {
             console.error(`NO SE HA PODIDO ACTUALIZAR: ${error}`);
             showErrorMessage(
@@ -399,6 +404,42 @@ export const showResponse = async (
         `Algo ha salido mal! Vuelve a intentarlo. <br> ${error}`
       );
     }
+  }
+};
+export const formularioDatos = () => {
+  try {
+    const formularioInformaiconPersonal =
+      document.getElementById("formularioPersonal");
+
+    formularioInformaiconPersonal.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await showInformationMessage(
+        "Antes de modificar tus datos, ten en cuenta que esto conlleva cerrar tu sesión."
+      );
+      const formData = {
+        ID: formularioInformaiconPersonal["ID"].value,
+        nombre: formularioInformaiconPersonal["nombre"].value,
+        apellido: formularioInformaiconPersonal["apellido"].value,
+        apellido2: formularioInformaiconPersonal["apellido2"].value || "",
+        nombre_usuario: formularioInformaiconPersonal["nombre_usuario"].value,
+        correo_electronico: formularioInformaiconPersonal["correo"].value,
+      };
+      const confirmaEnvio = await showConfirmationDialog(
+        "¿Estás seguro?",
+        "¿Deseas modificar tus datos? , esto conlleva cerrar tu session.",
+        "Si, modificar"
+      );
+
+      if (confirmaEnvio) {
+        const [response] = await getData(event.target.action);
+        showResponse(formData, response, "user", "");
+        setTimeout(() => {
+          window.location.href = formularioInformaiconPersonal["url"].value;
+        }, 2000);
+      }
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 

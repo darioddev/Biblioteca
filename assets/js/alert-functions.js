@@ -23,6 +23,15 @@ export const showConfirmationDialog = async (
   }
 };
 
+export const showInformationMessage = (message) => {
+  return Swal.fire({
+      title: "¡Atención!",
+      text: message,
+      icon: "info",
+  });
+};
+
+
 export const showSuccessMessage = (title, text = "") => {
   Swal.fire({
     title,

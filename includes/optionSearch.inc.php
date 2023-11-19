@@ -196,29 +196,41 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
             break;
                     case "PrestamosOrdenacion":
                         ?>
-            <option value="column=NombreUsuario&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'ASC') || isset($_GET['search']) ? 'selected' : ''; ?>>Ordenar
+            <option value="column=NombreUsuario&order=ASC" <?php echo ($SESSION[$nameColumna] == 'NombreUsuario' && $SESSION[$nameOrdenacion] == 'ASC') || isset($_GET['search']) ? 'selected' : ''; ?>>Ordenar
                 por...</option>
             <optgroup label="ASCENDENTE">
-                <option value="column=ID&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>ID</option>
-                <option value="column=NombreUsuario&order=ASC" <?php echo ($SESSION[$nameColumna] == 'NombreUsuario' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>NOMBRE USUARIO</option>
-                <option value="column=CorreoElectronico&order=ASC" <?php echo ($SESSION[$nameColumna] == 'CorreoElectronico' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>CORREO ELECTRONICO</option>
+                <?php
+                if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
+                    ?>
+                    <option value="column=ID&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>ID</option>
+                    <option value="column=NombreUsuario&order=ASC" <?php echo ($SESSION[$nameColumna] == 'NombreUsuario' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>NOMBRE USUARIO</option>
+                    <option value="column=CorreoElectronico&order=ASC" <?php echo ($SESSION[$nameColumna] == 'CorreoElectronico' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>CORREO ELECTRONICO</option>
+                <?php } ?>
                 <option value="column=NombreLibro&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'NombreLibro' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>NOMBRE LIBRO</option>
                 <option value="column=Fecha_inicio&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'Fecha_inicio' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>FECHA INICIO</option>
                 <option value="column=dias_restantes&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'dias_restantes' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>DIAS RESTANTES </option>
 
             </optgroup>
             <optgroup label="DESCENDENTE">
-                <option value="column=ID&order=DESC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ID</option>
-                <option value="column=NombreUsuario&order=DESC" <?php echo ($SESSION[$nameColumna] == 'NombreUsuario' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE USUARIO</option>
-                <option value="column=CorreoElectronico&order=DESC" <?php echo ($_SESSION[$nameColumna] == 'CorreoElectronico' && $_SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>CORREO ELETRONICO</option>
+                <?php
+                if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
+                    ?>
+                    <option value="column=ID&order=DESC" <?php echo ($SESSION[$nameColumna] == 'ID' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ID</option>
+                    <option value="column=NombreUsuario&order=DESC" <?php echo ($SESSION[$nameColumna] == 'NombreUsuario' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE USUARIO</option>
+                    <option value="column=CorreoElectronico&order=DESC" <?php echo ($_SESSION[$nameColumna] == 'CorreoElectronico' && $_SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>CORREO ELETRONICO</option>
+                <?php } ?>
                 <option value="column=NombreLibro&order=DESC" <?php echo ($SESSION[$nameColumna] == 'NombreLibro' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>NOMBRE LIBRO</option>
                 <option value="column=Fecha_inicio&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'Fecha_inicio' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>FECHA INICIO</option>
                 <option value="column=dias_restantes&order=ASC" <?php echo ($_SESSION[$nameColumna] == 'dias_restantes' && $_SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>DIAS RESTANTES</option>
 
-            <optgroup label="ESTADO">
-                <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
-                <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
-            </optgroup>
+                <?php
+                if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
+                    ?>
+                <optgroup label="ESTADO">
+                    <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
+                    <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
+                </optgroup>
+            <?php } ?>
             </select>
             </div>
             <?php
@@ -227,14 +239,18 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
                         ?>
             <optgroup label="Por defecto : titulo"></optgroup>
             <option value="Libros.titulo">Buscar por... </option>
+            <?php
+            if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
+                ?>  
             <option value="Prestamos.ID">ID</option>
             <option value="Usuarios.Nombre">NOMBRE USUARIO</option>
             <option value="Usuarios.Correo_Electronico">CORREO ELECTRONICO</option>
+            <?php } ?>
             <optgroup label="Para buscar por fechas solo se admite"></optgroup>
             <optgroup label="numeros ej : junio: 06 "></optgroup>
             <option value="Prestamos.Fecha_inicio">FECHA INICIO</option>
             <option value="Prestamos.Fecha_devolucion">FECHA DEVOLUCION</option>
-            <optgroup label="Para ver inactivos ponga : false"></optgroup>
+            <optgroup label="Para ver inactivos ponga : 0 "></optgroup>
             <optgroup label="Para ver activos ponga : 1"></optgroup>
             <option value="L.Estado">ESTADO</option>
             </select>

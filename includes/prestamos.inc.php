@@ -40,7 +40,7 @@ if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
     $usuarios = sql_get_all_prestamos(null, null, $_GET['type'], $_GET['search'], null, null);
     $pages = pages($_GET, $initalize, (int) count($usuarios));
     $usuarios = sql_get_all_prestamos($pages[0], $initalize, $_GET['type'], trim($_GET['search']), null, null);
-
+    
     $route = "?ruta=prestamos&row=" . $_SESSION['rowPrestamos'] . "&search=" . trim($_GET['search']) . "&type=" . $_GET['type'] . "";
 
 } elseif (
@@ -51,6 +51,13 @@ if (isset($_GET["search"]) && !empty($_GET["search"]) && isset($_GET['type'])) {
     $_SESSION['columnaPrestamos'] = $_GET['column'];
     $_SESSION['ordenacionPrestamos'] = $_GET['order'];
     $usuarios = sql_get_all_prestamos($pages[0], $initalize, null, null, $_GET["column"], $_GET["order"]);
+
+      
+    if (isset($_SESSION['rol']) && $_SESSION['rol'] == "LECTOR") {
+        $usuarios = sql_get_all_prestamos(null, $initalize, null, null, $_GET["column"], $_GET["order"], $_SESSION['id']);
+        $pages = pages($_GET, $initalize, count($usuarios));
+        $usuarios = sql_get_all_prestamos($pages[0], $initalize, null, null, $_GET["column"], $_GET["order"], $_SESSION['id']);
+    }
 
     $route = "?ruta=prestamos&row=" . $_SESSION['rowPrestamos'] . "&column=" . $_SESSION['columnaPrestamos'] . "&order=" . $_SESSION['ordenacionPrestamos'] . "";
 
@@ -75,8 +82,18 @@ if (count($usuarios) < $initalize) {
 
 <section class="home">
     <div class="text">
+    <?php
+        if (isset($_SESSION['rol']) && $_SESSION['rol'] == "LECTOR") {
+    ?>
+        TUS PRESTAMOS 
+    <?php
+        } else {
+        ?>
         PANEL DE PRESTAMOS
-    </div>
+        <?php
+        }
+    ?>
+</div>
     <?php
     if (isset($usuarios) && !empty($usuarios)) {
         ?>
@@ -96,8 +113,10 @@ if (count($usuarios) < $initalize) {
                 </div>
                 <?php
                 }
+                if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
                 optionOrdenacion("table-options-order", "buscarPor", "PrestamosBuscador");
                 formSearch($_SERVER["PHP_SELF"] . "?ruta=prestamos&search=", "busqueda");
+                }
                 ?>
         </div>
         </div>
@@ -107,7 +126,9 @@ if (count($usuarios) < $initalize) {
             paginaLinks('pagination', $pages[1], $route);
             ?>
             <?php
-            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'prestamos')
+            if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
+            iconAddDiv('add', 'add-link', 'anadeUsuario', 'bx bx-user-plus ', 'prestamos');
+            }
                 ?>
         </div>
         <?php
@@ -122,12 +143,20 @@ if (count($usuarios) < $initalize) {
         require_once("./includes/nofound.php");
 
     } else {
-        $heads = ['ID', 'NOMBRE', 'CORREO ELECTRONICO', 'NOMBRE DEL LIBRO ', 'FECHA INICIO', 'FECHA DEVOLUCION', 'DIAS RESTANTES', 'ESTADO', 'ACCIONES'];
+        $heads = ['ID','NOMBRE','CORREO ELECTRONICO', 'NOMBRE DEL LIBRO ', 'FECHA INICIO', 'FECHA DEVOLUCION', 'DIAS RESTANTES', 'ESTADO', 'ACCIONES'];
         $icons = array(
             array("option-link cog", dirname($_SERVER["PHP_SELF"]) . "/procesa_datos.inc.php?token=libros&prestamos=", "fas fa-user-cog", "modificado", "prestamos"),
             array("option-link alt", "?ruta=prestamos&remove=", "fas fa-trash-alt", "borrado", "prestamo", "", ""),
-            array("option-link check", "?ruta=prestamos&remove=", "fas fa-user-check", "reactivar", "")
+            array("option-link check", "?ruta=prestamos&remove=", "fas fa-user-check", "reactivar", ""),
+            array("", "", "", "", ""),
+            array("option-link upload", "?ruta=prestamos&remove=", "fas fa-arrow-up", "devolverLibro", "")
         );
+        
+        if (isset($_SESSION['rol']) && $_SESSION['rol'] == "LECTOR") {
+            $heads = ['PORTA DEL LIBRO', 'NOMBRE DEL LIBRO ', 'FECHA DE INICIO ', 'FECHA DEVOLUCION', 'DIAS_RESTANTES ','ESTADO','DEVOLUCION'];
+        }
+
+
         tableAdd("table", $heads, $usuarios, $icons);
     }
     ?>

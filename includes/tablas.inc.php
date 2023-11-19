@@ -29,6 +29,12 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                             $noMuestra[] = 'estado';
                             $noMuestra[] = 'id';
                             $noMuestra[] = 'fecha_creacion';
+                            $noMuestra[] = 'prestamoid';
+                            $noMuestra[] = 'nombreusuario';
+                            $noMuestra[] = 'usuarionombreusuario';
+                            $noMuestra[] = 'correoelectronico';
+                        } else {
+                            $noMuestra[] = 'imagenlibro';
                         }
 
                         if (in_array(strtolower($propiedad), $noMuestra)) {
@@ -36,7 +42,7 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                         }
 
 
-                        if (strtolower($propiedad) == "estado") {
+                        if (strtolower($propiedad) == "estado" || strtolower($propiedad) == "estadoprestamo") {
                             $value = $value ? "Activo" : "Inactivo";
                             ?>
                             <td class="table-state delete">
@@ -45,7 +51,7 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                                 </span>
                             </td>
                             <?php
-                        } elseif (strtolower($propiedad) == "imagen") {
+                        } elseif (strtolower($propiedad) == "imagen" || strtolower($propiedad) == "imagenlibro") {
                             ?>
                             <td><img src="<?php echo dirname($_SERVER["PHP_SELF"]) . "/" . $value ?>" alt="" width="300px"
                                     height="500px"></td>
@@ -78,7 +84,12 @@ function tableAdd(string $classname, array $heads, array $dataTabla, array $data
                                     iconAddLi($dataIcon[2][0], $dataIcon[2][1] . $dato['ID'], $dataIcon[2][2], $dataIcon[2][3], $dataIcon[2][4], isset($dato['ID_Autor']) ? $dato['ID_Autor'] : '', isset($dato['ID_Editorial']) ? $dato['ID_Editorial'] : 0, isset($dataIcon[2][5]) ? $dataIcon[2][5] : 0);
                                 }
                             } else {
-                                iconAddLi($dataIcon[4][0], $dataIcon[4][1] . $dato['ID'], $dataIcon[4][2], $dataIcon[4][3], "", $dato['ID'], $dataIcon[4][4]);
+                                if (isset($dato['dias_restantes']) && $dato["dias_restantes"] == 0) {
+                                    ?><strong>No se puede realizar acciones.</strong>
+                                    <?php
+                                } else {
+                                    iconAddLi($dataIcon[4][0], $dataIcon[4][1] . $dato['ID'], $dataIcon[4][2], $dataIcon[4][3], "", $dato['ID'], $dataIcon[4][4]);
+                                }
                             }
                             ?>
                         </ul>
