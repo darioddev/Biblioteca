@@ -16,5 +16,6 @@
         'prestamos' => './includes/prestamos.inc.php',
         '404' => './includes/404.inc.php',
         'configuracion' => './includes/configuracion.inc.php',
+        'CambioContrasena' => './includes/cambiarClave.inc.php',
     ]
 ?>

@@ -57,8 +57,7 @@ include_once('./includes/header.inc.php');
             <label for="passwordLogin">
                 Contraseña :
             </label>
-            <input type="password" name="passwordLogin" id="passwordLogin" title="Introduce tu contraseña"><i
-                class="fa fa-eye fa-eye-open"></i>
+            <input type="password" name="passwordLogin" id="passwordLogin" title="Introduce tu contraseña">
             <?php
         if (isset($error_login) || isset($_COOKIE['mensajeError'])) {
             ?>

@@ -1209,5 +1209,112 @@ function sql_get_prestamos_by_id($id, $prestamos_id = "Prestamos.ID", $state = n
     }
 }
 
+/**
+ * Funcion que obtiener de orden ascedente el numero de libros mas leidos
+ */
+function get_ranking_mas_leidos()
+{
+    try {
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        $consulta->prepare("SELECT Libros.ID, Libros.Titulo, Libros.Imagen, COUNT(Prestamos.ID_Libro) AS Prestamos FROM Prestamos JOIN Libros ON Prestamos.ID_Libro = Libros.ID GROUP BY Libros.ID ORDER BY Prestamos DESC");
+
+        $consulta->execute();
+
+        $resultado = $consulta->get_result();
+
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+
+    } catch (error) {
+        return [];
+
+    } finally {
+        if ($resultado) {
+            mysqli_free_result($resultado);
+        }
+        if ($consulta) {
+            $consulta->close();
+        }
+
+        if ($mysqli) {
+            $mysqli->close();
+        }
+
+
+    }
+}
+
+/**
+ * Funcion que obtiene el numero de usuarios registrados este ultimo mes 
+ */
+function get_count_mes($tabla = 'Usuarios', $campo = 'fecha_registro')
+{
+    try {
+
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        $consulta->prepare("SELECT COUNT(*) AS Total 
+        FROM " . $tabla . "
+        WHERE MONTH(" . $campo . ") = MONTH(CURDATE()) AND YEAR(" . $campo . ") = YEAR(CURDATE())");
+
+        $consulta->execute();
+
+        $resultado = $consulta->get_result();
+
+        $fila = $resultado->fetch_assoc();
+
+        return (int) $fila['Total'];
+    } catch (error) {
+        return [];
+    } finally {
+        if ($resultado) {
+            mysqli_free_result($resultado);
+        }
+        if ($consulta) {
+            $consulta->close();
+        }
+
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
+/**
+ * Funcion que devuelve el numero de usuarios inactivos
+ */
+function get_usuarios_inactivos() {
+    try{
+        $mysqli = sql_conect();
+
+        $consulta = $mysqli->stmt_init();
+
+        $consulta->prepare("SELECT COUNT(*) AS Total FROM Usuarios WHERE Estado = 0");
+
+        $consulta->execute();
+
+        $resultado = $consulta->get_result();
+
+        $fila = $resultado->fetch_assoc();
+
+        return (int) $fila['Total'];
+    }catch(error) {
+        return [];
+    }finally {
+        if ($resultado) {
+            mysqli_free_result($resultado);
+        }
+        if ($consulta) {
+            $consulta->close();
+        }
+
+        if ($mysqli) {
+            $mysqli->close();
+        }
+    }
+}
 
 ?>

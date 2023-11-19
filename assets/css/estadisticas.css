@@ -1,0 +1,89 @@
+.user-statsAD {
+    display: flex;
+    justify-content: space-around;
+    padding: 30px;
+    animation: move2 3s ease-in-out; 
+  }
+
+  .stats-cardAD {
+    background-color: #fff;
+    padding: 50px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .stats-cardAD:hover {
+    transform: scale(1.05);
+  }
+
+  .stats-card-titleAD {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .stats-card-valueAD {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  .arrow-upAD {
+    color: #4CAF50;
+  }
+
+  .arrow-downAD {
+    color: #F44336;
+  }
+
+  .user-iconAD {
+    color: #2196F3;
+  }
+
+  .book-iconAD {
+    color: #FF9800;
+  }
+
+  .custom-highlightsAD {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    animation: move2 3s ease-in-out;
+  }
+
+  .custom-book-cardAD {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    width: 30%;
+  }
+
+  .custom-book-cardAD:hover {
+    transform: scale(1.05);
+  }
+
+  .custom-book-cardAD img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .custom-book-card-titleAD {
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .custom-book-card-authorAD {
+    color: #555;
+  }
+  @keyframes move2 {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }

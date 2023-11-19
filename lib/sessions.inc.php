@@ -47,13 +47,8 @@ function initializeRow($nameRow)
     }
 }
 
-/**
- * Inicializa la sesión con datos de un usuario.
- *
- * @param int $id El ID del usuario para obtener sus datos.
- * @return void
- */
-function initializeDataSession(int $id): void {
+
+function initializeDataSession( $id) {
     foreach (sql_obtener_usuario($id) as $propiedad => $value) {
         // Convierte el nombre de la propiedad a minúsculas y la establece en la sesión
         $_SESSION[strtolower($propiedad)] = $value;
