@@ -23,18 +23,18 @@
       <div class="custom-book-cardAD">
         <img src="<?php echo $masleidos[0]['Imagen']?>" alt="Libro más prestado">
         <h2 class="custom-book-card-titleAD">Libro Más Prestado</h2>
-        <p class="custom-book-card-authorAD"><?php echo $masleidos[0]['Titulo']?></p>
+        <p class="custom-book-card-authorAD"><?php echo $masleidos[0]['NombreAutor'] . " " . $masleidos[0]['ApellidoAutor']?></p>
       </div>
 
       <div class="custom-book-cardAD">
         <img src="<?php echo $masleidos[count($masleidos)-1]['Imagen']?>" alt="Libro menos prestado">
         <h2 class="custom-book-card-titleAD">Libro Menos Prestado</h2>
-        <p class="custom-book-card-authorAD"><?php echo $masleidos[count($masleidos)-1]['Titulo']?></p>
+        <p class="custom-book-card-authorAD"><?php echo $masleidos[count($masleidos)-1]['NombreAutor'] . " " . $masleidos[count($masleidos)-1]['ApellidoAutor']?></p>
       </div>
 
       <div class="custom-book-cardAD">
         <img src="<?php echo $masleidos[0]['Imagen']?>" alt="Libro destacado">
         <h2 class="custom-book-card-titleAD">Libro Destacado</h2>
-        <p class="custom-book-card-authorAD"><?php echo $masleidos[0]['Titulo']?></p>
+        <p class="custom-book-card-authorAD"><?php echo $masleidos[0]['NombreAutor'] . " " . $masleidos[0]['ApellidoAutor']?> </p>
       </div>
     </section>

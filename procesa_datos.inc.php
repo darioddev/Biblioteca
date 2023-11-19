@@ -67,7 +67,7 @@ if (!empty($data)) {
                 'fecha_nacimiento' => $data["fecha_nacimiento"]
             ];
 
-            $response = proccesaData($errores_campos, $data, 'Autores', $array);
+            $response = procesaData($errores_campos, $data, 'Autores', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         case 'insertarEditorial':
@@ -76,7 +76,7 @@ if (!empty($data)) {
                 'nombre' => $data["nombre"],
                 'fecha_creacion' => $data["fecha_creacion"]
             ];
-            $response = proccesaData($errores_campos, $data, 'Editoriales', $array);
+            $response = procesaData($errores_campos, $data, 'Editoriales', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         /* Este insertar libro solo va a veirifcar el parametro de nombre*/
@@ -97,7 +97,7 @@ if (!empty($data)) {
                 'ID_Editorial' => $data['ID_Editorial'],
                 'Imagen' => $data['nombreArchivo'],
             ];
-            $response = proccesaData($errores_campos, $data, 'Libros', $array);
+            $response = procesaData($errores_campos, $data, 'Libros', $array);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         case 'verificaEstado':
@@ -144,7 +144,7 @@ if (!empty($data)) {
                 'Fecha_inicio' => date("Y-m-d"),
                 'dias_restantes' => $data['dias_restantes']
             ];
-            $response = proccesaData($errores_campos, $data, 'Prestamos', $array);
+            $response = procesaData($errores_campos, $data, 'Prestamos', $array);
             sql_update_estado('Libros', $data["ID_Libro"]);
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;

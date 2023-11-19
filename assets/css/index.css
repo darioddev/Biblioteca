@@ -21,7 +21,7 @@ body {
 
 body::before {
     content: '';
-    /*background: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad según lo desees */
+    background: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad según lo desees */
     position: absolute;
     top: 0;
     right: 0;

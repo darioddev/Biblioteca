@@ -1219,7 +1219,23 @@ function get_ranking_mas_leidos()
 
         $consulta = $mysqli->stmt_init();
 
-        $consulta->prepare("SELECT Libros.ID, Libros.Titulo, Libros.Imagen, COUNT(Prestamos.ID_Libro) AS Prestamos FROM Prestamos JOIN Libros ON Prestamos.ID_Libro = Libros.ID GROUP BY Libros.ID ORDER BY Prestamos DESC");
+        $consulta->prepare("SELECT
+        Libros.ID,
+        Libros.Titulo,
+        Libros.Imagen,
+        COUNT(Prestamos.ID_Libro) AS Prestamos,
+        Autores.Nombre AS NombreAutor,
+        Autores.Apellido AS ApellidoAutor
+    FROM
+        Prestamos
+    JOIN
+        Libros ON Prestamos.ID_Libro = Libros.ID
+    JOIN
+        Autores ON Libros.ID_Autor = Autores.ID
+    GROUP BY
+        Libros.ID
+    ORDER BY
+        Prestamos DESC");
 
         $consulta->execute();
 
@@ -1286,8 +1302,9 @@ function get_count_mes($tabla = 'Usuarios', $campo = 'fecha_registro')
 /**
  * Funcion que devuelve el numero de usuarios inactivos
  */
-function get_usuarios_inactivos() {
-    try{
+function get_usuarios_inactivos()
+{
+    try {
         $mysqli = sql_conect();
 
         $consulta = $mysqli->stmt_init();
@@ -1301,9 +1318,9 @@ function get_usuarios_inactivos() {
         $fila = $resultado->fetch_assoc();
 
         return (int) $fila['Total'];
-    }catch(error) {
+    } catch (error) {
         return [];
-    }finally {
+    } finally {
         if ($resultado) {
             mysqli_free_result($resultado);
         }
