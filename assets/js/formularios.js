@@ -429,20 +429,22 @@ export const formularioDatos = () => {
         nombre_usuario: formularioInformaiconPersonal["nombre_usuario"].value,
         correo_electronico: formularioInformaiconPersonal["correo"].value,
       };
+
       const confirmaEnvio = await showConfirmationDialog(
         "¿Estás seguro?",
         "¿Deseas modificar tus datos? , esto conlleva cerrar tu session.",
         "Si, modificar"
       );
 
+
       if (confirmaEnvio) {
-        const [response] = await getData(event.target.action);
         try {
+          const [response] = await getData(event.target.action);
           const respuesta = await showResponse(formData, response, "user", "");
           console.log(respuesta);
-          /*setTimeout(() => {
+          setTimeout(() => {
             window.location.href = formularioInformaiconPersonal["url"].value;
-          }, 2000);*/
+          }, 1000);
         } catch (error) {
           console.log(error);
         }

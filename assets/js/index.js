@@ -1,9 +1,7 @@
 import {
   showConfirmationDialog,
-  showSuccessMessage,
   showErrorMessage,
   handleConfirmation,
-  showInformationMessage,
 } from "./alert-functions.js";
 import { getData, postData } from "./axios-functions.js";
 
