@@ -24,7 +24,7 @@ if (isset($_POST['sendLogin'])) {
 
     if (!isset($error_login)) {
         $_SESSION['user'] = $_POST['userLogin'];
-        inializeDataSession($_SESSION['user']);
+        initializeDataSession($_SESSION['user']);
 
         if (isset($_SESSION['estado']) && $_SESSION['estado'] == 0) {
             setcookie('mensajeError', 'Al parecer tu cuenta esta desactivada para volver activarla debe comunicarse con un administrador.', time() + 3600, '/');

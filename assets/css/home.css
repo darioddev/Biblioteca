@@ -1,0 +1,55 @@
+body {
+    color: var(--text-color);
+}
+.user-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.card {
+    background-color: #ecf0f1;
+    padding: 50px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.card p {
+    font-size: 20px;
+}
+.highlights {
+    padding: 20px;
+}
+
+.book-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.book-card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.rankings {
+    padding: 20px;
+}
+
+.rankings ol {
+    list-style: none;
+    padding: 0;
+}
+
+.rankings li {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.rankings li img {
+    max-width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
