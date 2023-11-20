@@ -238,8 +238,8 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
                 if (isset($_SESSION['rol']) && $_SESSION['rol'] != "LECTOR") {
                     ?>
                 <optgroup label="ESTADO">
-                    <option value="column=ESTADO&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
-                    <option value="column=ESTADO&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
+                    <option value="column=EstadoPrestamo&order=ASC" <?php echo ($SESSION[$nameColumna] == 'ESTADO' && $SESSION[$nameOrdenacion] == 'ASC') ? 'selected' : ''; ?>>INACTIVO</option>
+                    <option value="column=EstadoPrestamo&order=DESC" <?php echo ($SESSION[$nameColumna] === 'ESTADO' && $SESSION[$nameOrdenacion] == 'DESC') ? 'selected' : ''; ?>>ACTIVO</option>
                 </optgroup>
             <?php } ?>
             </select>

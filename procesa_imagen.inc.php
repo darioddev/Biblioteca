@@ -35,7 +35,9 @@ if (!empty($_FILES) && isset($_FILES['Archivo']) && $_FILES['Archivo']['error'] 
     } else {
         echo json_encode(['error' => 'Lo siento, el archivo no se ha subido, por favor, inténtalo de nuevo.']);
     }
+    
 } else {
     echo json_encode(['error' => 'No se recibió ningún archivo o hubo un error en la subida.']);
 }
+
 ?>
