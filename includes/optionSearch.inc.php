@@ -52,7 +52,7 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
                 <option value="NOMBRE_USUARIO">NOMBRE USUARIO</option>
                 <option value="CORREO_ELECTRONICO">CORREO ELECTRONICO</option>
                 <option value="FECHA_REGISTRO">FECHA REGISTRO</option>
-                <optgroup label="Para ver inactivos ponga : false"></optgroup>
+                <optgroup label="Para ver inactivos ponga : 0"></optgroup>
                 <optgroup label="Para ver activos ponga : 1"></optgroup>
                 <option value="ESTADO">ESTADO</option>
                 <option value="ROL">ROL</option>
@@ -141,7 +141,6 @@ function optionOrdenacion($classname, $idSelect, $tipo, $SESSION = '', $nameColu
             <optgroup label="numeros ej : junio: 06 "></optgroup>
             <option value="FECHA_CREACION">FECHA CREACION</option>
             <option value="FECHA_MODIFICACION">FECHA MODIFICACION</option>
-            <optgroup label="Para ver inactivos ponga : false"></optgroup>
             <optgroup label="Para ver activos ponga : 1"></optgroup>
             <option value="ESTADO">ESTADO</option>
             </select>

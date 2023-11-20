@@ -1,3 +1,12 @@
+<?php
+//Si existe la cookie
+if (isset($_COOKIE['mensajeError'])) {
+    //Mostramos el mensaje
+    echoAlert('Error', $_COOKIE['mensajeError'], 'error');
+    //Eliminamos la cookie
+    setcookie('mensajeError', '', time() - 3600, '/');
+}
+?>
 <link rel="stylesheet" href="./assets/css/nav.css">
 <nav class="sidebar close">
     <header>
@@ -6,7 +15,7 @@
                 <?php echo $_SESSION['user'] ?>
             </span>
             <span class="rol">
-                <?php echo $_SESSION['rol'] ; 
+                <?php echo $_SESSION['rol'];
                 ?>
             </span>
         </div>
@@ -74,7 +83,14 @@
             </ul>
         </div>
         <div class="bottom-content">
-        <li class="class">
+            <li class="class">
+                <a href="<?php echo "?ruta=borrar&borrar=" . $_SESSION['id'] ?>" id="borrarCuenta">
+                    <i class="bx bx-message-square-x icon"></i>
+                    <span class="text nav-text">Eliminar cuenta </span>
+                </a>
+            </li>
+
+            <li class="class">
                 <a href="?ruta=configuracion" id="">
                     <i class="bx bx-cog icon"></i>
                     <span class="text nav-text">Configuracion</span>

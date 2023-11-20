@@ -60,9 +60,9 @@ if (!empty($data)) {
                     // Mostrar un mensaje de error.
                     echo json_encode(['warning' => 'Hubo un problema en la insercción.']);
                 }
-            
-            // De lo contrario
-            // Mostrar los errores encontrados.
+
+                // De lo contrario
+                // Mostrar los errores encontrados.
             } else {
                 $errorsArray = formatearErrores($errores_campos);
                 echo json_encode(['errors' => $errorsArray, 'error' => ''], JSON_UNESCAPED_UNICODE);
@@ -119,40 +119,52 @@ if (!empty($data)) {
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
 
+
         case 'verificaEstado':
+            // Comprueba el estado de la tabla libros , con la ID obtenida sobre la columna obtenida de $data['ForeignKey'] y que el estado  de la tabla sea activo
             $response['response'] = sql_get_estado('Libros', $data['id'], $data['ForeignKey'], true);
 
             if (!is_null($response['response'])) {
+                // Si la respuesta no es nula , se obtiene el libro por id
                 $response['libros'] = sql_get_libro_by_id($data['id'], $data['keyBD'], true);
             }
-
+            // Se obtiene los prestamos por id
             $response['prestamos'] = sql_get_prestamos_by_id($data['id'], 'Libros.ID_Autor', true);
 
-
+            // Se imprime la respuesta por JSON que sera capturado con axios como objecto.
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         case 'verificaReactivacion':
+            // Comprueba el estado de la tabla Autores con el valor obtenido por parametro sobre la columna ID por defecto 
             $response['autor'] = sql_get_estado('Autores', $data['id']);
+            // Comprueba el estado de la tabla Editoriales con el valor obtenido por parametro sobre la columna ID por defecto
             $response['editoriales'] = sql_get_estado('Editoriales', $data['ForeignKey']);
 
+            // Si el estado de la tabla Autores es inactivo o el estado de la tabla Editoriales es inactivo
             if (!$response['autor'] || $response['autor'] == 0) {
+                // Se imprime un error
                 $response['errorAutor'] = 'El estado de autor es inactivo , para poder activar el libro tendras que activar el autor';
             }
             if ($response['editoriales'] == 0 || !$response['editoriales']) {
+                // Se imprime un error
                 $response['errorEditorial'] = 'El estado de editorial es inactivo , para poder activar el libro tendras que activar el autor';
             }
+            // Se obtiene los prestamos por id_libro y que el estado sea activo
             $response['prestamos'] = sql_get_prestamos_by_id($data['ID_Libro'], 'ID_Libro', true);
 
+            // Se imprime la respuesta por JSON que sera capturado con axios como objecto.
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
             break;
         case 'verificaPrestamo':
+            // Comprueba el estado de la tabla prestamos con el valor obtenido ID , sobre la columna obtenida de ForeignKey y que el estado sea activo
             $response['response'] = sql_get_estado('Prestamos', $data['id'], $data['ForeignKey'], true);
 
+            // Si la respuesta no es nula , se obtiene el prestamo por id
             if (!is_null($response['response'])) {
                 $response['prestamos'] = sql_get_prestamos_by_id($data['id'], $data['keyBD'], true);
             }
-
+            // Se imprime la respuesta por JSON que sera capturado con axios como objecto.
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
             break;
         // Acción para insertar un prestamo

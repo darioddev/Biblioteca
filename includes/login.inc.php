@@ -22,23 +22,31 @@ if (isset($_POST['sendLogin'])) {
     } else
         $error_login = 'El usuario y/o contraseña introducida no son validos.';
 
+    //Si no hay errores en el login , procederemos a iniciar sesion y redirigir al usuario a la pagina de inicio.
     if (!isset($error_login)) {
+        // Se crea la sesion y se redirige al usuario a la pagina de inicio
         $_SESSION['user'] = $_POST['userLogin'];
+        // Se crea sessiones para almacenar los datos del usuario
         initializeDataSession($_SESSION['user']);
 
+        // Comprobamos si el usuario esta activo o no
         if (isset($_SESSION['estado']) && $_SESSION['estado'] == 0) {
             setcookie('mensajeError', 'Al parecer tu cuenta esta desactivada para volver activarla debe comunicarse con un administrador.', time() + 3600, '/');
             header('Location:' . $_SERVER['PHP_SELF'] . '?ruta=logout');
             exit();
         }
+        // Si existe la cookie de error la eliminamos
         if (isset($_COOKIE['mensajeError']))
             setcookie('mensajeError', '', time() - 3600, '/');
 
+        // Redirigimos al usuario a la pagina de inicio
         sleep(2);
         header('Location:' . $_SERVER['PHP_SELF'] . '?ruta=home');
         exit();
     }
 
+}else {
+    setcookie('mensajeError', '', time() - 3600, '/');
 }
 ?>
 
@@ -49,7 +57,7 @@ include_once('./includes/header.inc.php');
 <div class="form-login">
     <form method="POST" action="" class="form">
         <label for="userLogin">
-            Nombre de Usuario :
+            Nombre de Usuario / Correo electronico :
         </label>
         <input type="text" name="userLogin" id="userLogin" title="Introduce tu correo electronico o usuario" value="<?php if (isset($_POST['userLogin']))
             echo $_POST['userLogin'] ?>">

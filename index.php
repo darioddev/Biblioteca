@@ -34,25 +34,39 @@ require_once('./lib/database.inc.php');
 
 <body>
     <?php
+
+    // Si existe la variable $_GET['ruta'] y no está vacía
     if (isset($_GET['ruta']) && !empty($_GET['ruta'])) {
+        // Si no existe la sesión 'user'
         if (!isset($_SESSION['user'])) {
+            // Si existe la ruta en la tabla de rutas
             if (isset($URL_PUBLIC[$_GET['ruta']]))
+                // Carga la página que corresponda
                 include_once($URL_PUBLIC[$_GET['ruta']]);
             else
+                // Carga la página de inicio
                 header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=login');
         } else {
+            // Si existe la ruta en la tabla de rutas
             if (isset($URL_USUARIOS[$_GET['ruta']])) {
+                // Carga la página que corresponda
                 include_once($URL_USUARIOS[$_GET['ruta']]);
             } else
+                // Carga la página de inicio
                 header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=home');
         }
     } else {
+        // Si no existe ninguna variable GET
         if (!empty($_GET))
+            // Carga la página de login 
             header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=login');
         else {
+            // Si no existe la sesión 'user'
             if (!isset($_SESSION['user']))
+                // Carga la página de login
                 include_once('./includes/login.inc.php');
             else
+                // Carga la página de inicio
                 header('Location: ' . $_SERVER['PHP_SELF'] . '?ruta=home');
         }
     }

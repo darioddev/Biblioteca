@@ -225,7 +225,7 @@ export const initializeUserInterface = async () => {
 
         switch (action) {
           case "usuarios":
-            title = "Registro de nuevo ";
+            title = "Registro de un nuevo usuario";
             _action = "insertarUsuario";
             message = "Usuario";
             formulario = `

@@ -202,7 +202,9 @@ function sql_valida_usuario_correo(string $usuario): bool
  */
 function sql_valida_contrasena(string $usuario, string $contrasena): bool
 {
+    // Obtenemos los datos del usuario
     $datos = sql_obtener_usuario($usuario);
+    // Verificamos si el usuario existe y si la contraseña coincide
     if (!empty($datos))
         return password_verify($contrasena, $datos['CONTRASEÑA']);
 
@@ -223,7 +225,7 @@ function sql_valida_login(string $usuario, $contrasena): bool
 }
 
 /**
- * Obtiene el estado de un usuario a partir de su nombre de usuario.
+ * Obtiene el estado de la tabla pasada por parametro 
  *
  * @param string $tabla Nombre de la tabla en la base de datos.
  * @param string $id Valor del identificador (ID) del usuario.

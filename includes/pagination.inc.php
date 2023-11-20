@@ -24,6 +24,7 @@ function paginaLinks($classname, $totalPaginas, $route)
 }
 
 /**
+ * 
  * Calcula el offset y el número total de páginas para la paginación.
  *
  * @param array $paramentGet El array con los parámetros de la solicitud GET.
@@ -37,7 +38,7 @@ function pages($paramentGet, $initalize, $tabla)
     $usuariosPorPagina = $initalize;
 
     if ($usuariosPorPagina <= 0) {
-        $usuariosPorPagina = 1; // 1 el valor por defecto que desees
+        $usuariosPorPagina = 1; // 1 el valor por defecto 
     }
 
     $offset = ($paginaActual - 1) * $usuariosPorPagina;
@@ -57,24 +58,4 @@ function pages($paramentGet, $initalize, $tabla)
     return [$offset, $totalPaginas];
 }
 
-
-
-
-/*
-$paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
-$usuariosPorPagina = (int) $initalize;
-
-// Asegúrate de que $usuariosPorPagina sea mayor a cero para evitar la división por cero
-if ($usuariosPorPagina <= 0) {
-    $usuariosPorPagina = 1; // O el valor por defecto que desees
-}
-
-$offset = (int) ($paginaActual - 1) * $usuariosPorPagina;
-
-// Obtener el número total de usuarios para la paginación
-$totalUsuarios = (int) sql_count_tabla('Usuarios');
-
-// Asegúrate de que $usuariosPorPagina no sea cero antes de realizar la división
-$totalPaginas = ($usuariosPorPagina > 0) ? ceil($totalUsuarios / $usuariosPorPagina) : 1;
-*/
 ?>

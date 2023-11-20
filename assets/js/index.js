@@ -2,6 +2,7 @@ import {
   showConfirmationDialog,
   showErrorMessage,
   handleConfirmation,
+  showSuccessMessage,
 } from "./alert-functions.js";
 import { getData, postData } from "./axios-functions.js";
 
@@ -21,7 +22,7 @@ import {
   showPrestamoForm,
   formularioDatos,
 } from "./formularios.js";
-/* Navegador */
+
 initializeUI();
 
 initializeUserModule();
@@ -29,6 +30,8 @@ initializeUserModule();
 initializeUserInterface();
 
 formularioDatos();
+
+
 
 // Función para mostrar el formulario de registro de usuario
 
@@ -351,3 +354,19 @@ try {
 } catch (error) {
   console.log(error);
 }
+
+const eliminarCuenta = document.getElementById("borrarCuenta");
+
+eliminarCuenta.addEventListener("click", async (event) => {
+  event.preventDefault();
+
+  const confirmacion = await showConfirmationDialog(
+    "¿Estás seguro?",
+    "Deseas eliminar tu cuenta",
+    "Confirmar"
+  );
+  if (confirmacion) {
+    showSuccessMessage("¡Cuenta eliminada!", "Tu cuenta ha sido eliminada.");
+    window.location.href = eliminarCuenta.href;
+  }
+});
